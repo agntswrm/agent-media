@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
+import 'dotenv/config';
 import { Command } from 'commander';
 import { registerAllProviders } from '@agent-media/providers';
 import { resize, convert, removeBackground, generate, extend, edit, printResult } from '@agent-media/image';
+import { transcribe } from '@agent-media/video';
 import type { ImageFormat } from '@agent-media/core';
 import { getConfig, mergeConfig } from '@agent-media/core';
 
@@ -205,6 +207,45 @@ imageCommand
     const result = await edit({
       input: options.in,
       prompt: options.prompt,
+      out: merged.outputDir,
+      provider: merged.provider,
+    });
+
+    printResult(result);
+    process.exit(result.ok ? 0 : 1);
+  });
+
+// Video command group
+const videoCommand = program
+  .command('video')
+  .description('Video processing commands');
+
+// Video transcribe command
+videoCommand
+  .command('transcribe')
+  .description('Transcribe audio/video to text with timestamps')
+  .requiredOption('--in <path>', 'Input file path or URL')
+  .option('--diarize', 'Enable speaker identification')
+  .option('--language <code>', 'Language code (auto-detected if not provided)')
+  .option('--speakers <number>', 'Number of speakers hint', parseInt)
+  .option('--out <path>', 'Output directory')
+  .option('--provider <name>', 'Provider to use (fal, replicate)')
+  .action(async (options: {
+    in: string;
+    diarize?: boolean;
+    language?: string;
+    speakers?: number;
+    out?: string;
+    provider?: string;
+  }) => {
+    const config = getConfig();
+    const merged = mergeConfig(config, { out: options.out, provider: options.provider });
+
+    const result = await transcribe({
+      input: options.in,
+      diarize: options.diarize,
+      language: options.language,
+      numSpeakers: options.speakers,
       out: merged.outputDir,
       provider: merged.provider,
     });

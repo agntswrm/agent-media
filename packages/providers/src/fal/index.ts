@@ -1,4 +1,5 @@
 import { createFal } from '@ai-sdk/fal';
+import { fal } from '@fal-ai/client';
 import { generateImage } from 'ai';
 import { writeFile, readFile, stat } from 'node:fs/promises';
 import type {
@@ -8,10 +9,13 @@ import type {
   ActionContext,
   GenerateOptions,
   RemoveBackgroundOptions,
+  TranscribeOptions,
+  TranscriptionData,
 } from '@agent-media/core';
 import {
   createSuccess,
   createError,
+  createTranscriptionSuccess,
   ensureOutputDir,
   generateOutputFilename,
   getOutputPath,
@@ -21,7 +25,7 @@ import {
 /**
  * Actions supported by the fal provider
  */
-const SUPPORTED_ACTIONS = ['generate', 'remove-background'];
+const SUPPORTED_ACTIONS = ['generate', 'remove-background', 'transcribe'];
 
 /**
  * Fal.ai provider for image generation and processing
@@ -55,6 +59,8 @@ export const falProvider: MediaProvider = {
           return await executeGenerate(actionConfig.options, context, apiKey);
         case 'remove-background':
           return await executeRemoveBackground(actionConfig.options, context, apiKey);
+        case 'transcribe':
+          return await executeTranscribe(actionConfig.options, context, apiKey);
         default:
           return createError(
             ErrorCodes.INVALID_INPUT,
@@ -190,6 +196,135 @@ async function executeRemoveBackground(
     outputPath: outputPath,
     mime: 'image/png',
     bytes: stats.size,
+  });
+}
+
+/**
+ * Execute transcribe action using fal.ai whisper models
+ * Uses wizper (faster) when diarize=false, whisper when diarize=true
+ */
+async function executeTranscribe(
+  options: TranscribeOptions,
+  context: ActionContext,
+  apiKey: string
+): Promise<MediaResult> {
+  const { input, diarize = false, language, numSpeakers } = options;
+
+  if (!input?.source) {
+    return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for transcription');
+  }
+
+  // Configure fal client with API key
+  fal.config({ credentials: apiKey });
+
+  // Prepare the audio URL
+  let audioUrl: string;
+  if (input.isUrl) {
+    audioUrl = input.source;
+  } else {
+    // Upload local file using fal client
+    const buffer = await readFile(input.source);
+    const ext = input.source.toLowerCase().split('.').pop();
+    let mimeType: string;
+    switch (ext) {
+      case 'mp3':
+        mimeType = 'audio/mpeg';
+        break;
+      case 'wav':
+        mimeType = 'audio/wav';
+        break;
+      case 'mp4':
+        mimeType = 'video/mp4';
+        break;
+      case 'm4a':
+        mimeType = 'audio/mp4';
+        break;
+      case 'webm':
+        mimeType = 'video/webm';
+        break;
+      case 'ogg':
+        mimeType = 'audio/ogg';
+        break;
+      default:
+        mimeType = 'application/octet-stream';
+    }
+
+    // Create a Blob from the buffer and upload via fal client
+    const filename = input.source.split('/').pop() || 'audio';
+    const blob = new Blob([buffer], { type: mimeType });
+    const file = new File([blob], filename, { type: mimeType });
+    audioUrl = await fal.storage.upload(file);
+  }
+
+  // Select model based on diarize flag
+  // wizper is 2x faster but doesn't support diarization
+  // whisper supports diarization
+  const model = diarize ? 'fal-ai/whisper' : 'fal-ai/wizper';
+
+  // Build request body
+  const requestBody: Record<string, unknown> = {
+    audio_url: audioUrl,
+    chunk_level: 'segment',
+  };
+
+  if (diarize) {
+    requestBody['diarize'] = true;
+    if (numSpeakers) {
+      requestBody['num_speakers'] = numSpeakers;
+    }
+  }
+
+  if (language) {
+    requestBody['language'] = language;
+  }
+
+  const response = await fetch(`https://fal.run/${model}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Key ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    return createError(ErrorCodes.API_ERROR, `Fal API error: ${response.status} - ${errorText}`);
+  }
+
+  const result = await response.json() as {
+    text: string;
+    chunks?: Array<{
+      timestamp: [number, number];
+      text: string;
+      speaker?: string;
+    }>;
+    inferred_languages?: string[];
+  };
+
+  // Transform to our TranscriptionData format
+  const transcription: TranscriptionData = {
+    text: result.text || '',
+    language: result.inferred_languages?.[0] || language || 'unknown',
+    segments: (result.chunks || []).map(chunk => ({
+      start: chunk.timestamp[0],
+      end: chunk.timestamp[1],
+      text: chunk.text,
+      ...(chunk.speaker ? { speaker: chunk.speaker } : {}),
+    })),
+  };
+
+  // Save transcription to JSON file
+  const outputFilename = generateOutputFilename('json', 'transcription');
+  const outputPath = getOutputPath(context.outputDir, outputFilename);
+
+  await writeFile(outputPath, JSON.stringify(transcription, null, 2));
+
+  return createTranscriptionSuccess({
+    mediaType: 'video',
+    provider: 'fal',
+    outputPath: outputPath,
+    transcription,
   });
 }
 
