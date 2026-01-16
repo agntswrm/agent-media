@@ -9,6 +9,11 @@ export type MediaType = 'image' | 'video' | 'audio';
 export type ImageAction = 'resize' | 'convert' | 'remove-background' | 'generate' | 'extend' | 'edit';
 
 /**
+ * Supported video actions
+ */
+export type VideoAction = 'transcribe';
+
+/**
  * Supported image formats
  */
 export type ImageFormat = 'png' | 'jpg' | 'jpeg' | 'webp';
@@ -91,6 +96,47 @@ export interface EditOptions {
 }
 
 /**
+ * A segment of transcribed text with timing information
+ */
+export interface TranscriptionSegment {
+  start: number;
+  end: number;
+  text: string;
+  speaker?: string;
+}
+
+/**
+ * Complete transcription data
+ */
+export interface TranscriptionData {
+  text: string;
+  language: string;
+  segments: TranscriptionSegment[];
+}
+
+/**
+ * Options for transcribe action
+ */
+export interface TranscribeOptions {
+  input: MediaInput;
+  diarize?: boolean;
+  language?: string;
+  numSpeakers?: number;
+}
+
+/**
+ * Successful result from a transcription operation
+ */
+export interface TranscriptionSuccessResult {
+  ok: true;
+  media_type: 'video' | 'audio';
+  action: 'transcribe';
+  provider: string;
+  output_path: string;
+  transcription: TranscriptionData;
+}
+
+/**
  * Union type for all action options
  */
 export type ActionOptions =
@@ -99,7 +145,8 @@ export type ActionOptions =
   | { action: 'remove-background'; options: RemoveBackgroundOptions }
   | { action: 'generate'; options: GenerateOptions }
   | { action: 'extend'; options: ExtendOptions }
-  | { action: 'edit'; options: EditOptions };
+  | { action: 'edit'; options: EditOptions }
+  | { action: 'transcribe'; options: TranscribeOptions };
 
 /**
  * Structured error information
@@ -133,7 +180,7 @@ export interface MediaErrorResult {
 /**
  * Result from a media operation
  */
-export type MediaResult = MediaSuccessResult | MediaErrorResult;
+export type MediaResult = MediaSuccessResult | MediaErrorResult | TranscriptionSuccessResult;
 
 /**
  * Context for executing an action

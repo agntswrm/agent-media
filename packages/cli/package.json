@@ -11,6 +11,8 @@
   "keywords": [
     "media",
     "image",
+    "video",
+    "transcribe",
     "cli",
     "agent",
     "ai",
@@ -37,7 +39,9 @@
     "@agent-media/core": "workspace:*",
     "@agent-media/image": "workspace:*",
     "@agent-media/providers": "workspace:*",
-    "commander": "^12.0.0"
+    "@agent-media/video": "workspace:*",
+    "commander": "^12.0.0",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
