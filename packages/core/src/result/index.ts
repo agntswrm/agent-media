@@ -3,6 +3,8 @@ import type {
   MediaSuccessResult,
   MediaErrorResult,
   MediaResult,
+  TranscriptionData,
+  TranscriptionSuccessResult,
 } from '../types/index.js';
 
 /**
@@ -57,6 +59,25 @@ export function createError(
       code,
       message,
     },
+  };
+}
+
+/**
+ * Create a transcription success result
+ */
+export function createTranscriptionSuccess(params: {
+  mediaType: 'video' | 'audio';
+  provider: string;
+  outputPath: string;
+  transcription: TranscriptionData;
+}): TranscriptionSuccessResult {
+  return {
+    ok: true,
+    media_type: params.mediaType,
+    action: 'transcribe',
+    provider: params.provider,
+    output_path: params.outputPath,
+    transcription: params.transcription,
   };
 }
 

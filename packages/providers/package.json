@@ -45,6 +45,7 @@
     "@agent-media/core": "workspace:*",
     "@ai-sdk/fal": "^2.0.6",
     "@ai-sdk/replicate": "^2.0.6",
+    "@fal-ai/client": "^1.8.3",
     "@runpod/ai-sdk-provider": "^1.1.0",
     "ai": "^6.0.33",
     "sharp": "^0.33.0"
