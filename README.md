@@ -1,18 +1,53 @@
 # agent-media
 
-Media processing CLI for AI agents. Resize, convert, generate, and remove backgrounds from images.
+Media processing CLI for AI agents. Generate, edit, resize images. Extract and transcribe audio from video.
 
-## Installation
+## Quick Start
 
-### npx (no install)
+**Requires API key** ([fal.ai](https://fal.ai/dashboard/keys), [replicate](https://replicate.com/account/api-tokens), or [runpod](https://www.runpod.io/console/user/settings))
+
+```bash
+# Set your API key
+export FAL_API_KEY=your-key
+
+# Generate an image
+npx agent-media image generate --prompt "a robot painting a sunset"
+
+# Edit the generated image
+npx agent-media image edit --in .agent-media/generated_*.png --prompt "add a cat watching"
+
+# Remove background
+npx agent-media image remove-background --in .agent-media/edited_*.png
+
+# Convert to webp
+npx agent-media image convert --in .agent-media/nobg_*.png --format webp
+```
+
+**Video to transcript** (no API key needed for extract)
+
+```bash
+# Extract audio from video (local, no API key)
+npx agent-media audio extract --in video.mp4
+
+# Transcribe with speaker identification
+npx agent-media audio transcribe --in .agent-media/extracted_*.mp3 --diarize
+```
+
+**Local processing** (no API key needed)
 
 ```bash
 npx agent-media image resize --in photo.jpg --width 800
+npx agent-media image convert --in photo.png --format webp
+npx agent-media image extend --in photo.jpg --padding 50 --color "#FFFFFF"
 ```
 
-### npm (global install)
+## Installation
 
 ```bash
+# Use directly with npx (no install)
+npx agent-media --help
+
+# Or install globally
 npm install -g agent-media
 ```
 
@@ -21,24 +56,13 @@ npm install -g agent-media
 ```bash
 git clone https://github.com/TimPietrusky/agent-media
 cd agent-media
-pnpm install
-pnpm build
-pnpm link --global
+pnpm install && pnpm build && pnpm link --global
 ```
 
 ## Requirements
 
 - Node.js >= 18.0.0
-- pnpm (for development from source)
-
-## Quick Start
-
-```bash
-agent-media image resize --in photo.jpg --width 800
-agent-media image convert --in photo.png --format webp
-agent-media image remove-background --in portrait.jpg
-agent-media image generate --prompt "a red robot"
-```
+- API key for AI features (generate, edit, remove-background, transcribe)
 
 ## Commands
 
