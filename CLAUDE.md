@@ -113,15 +113,27 @@ git diff --stat
 ```
 
 ### 3. Create a changeset file
+
+**IMPORTANT: ALWAYS verify package names first!**
+```bash
+# Check actual package names before writing changeset
+cat packages/*/package.json | grep '"name"'
+```
+
+Actual package names in this workspace:
+- `agent-media` (CLI - NOT @agent-media/cli!)
+- `@agent-media/core`
+- `@agent-media/providers`
+- `@agent-media/image`
+- `@agent-media/audio`
+- `@agent-media/video`
+- `@agent-media/skills`
+
 Create `.changeset/<descriptive-name>.md`:
 ```markdown
 ---
 "agent-media": patch|minor|major
 "@agent-media/core": patch|minor|major
-"@agent-media/providers": patch|minor|major
-"@agent-media/image": patch|minor|major
-"@agent-media/audio": patch|minor|major
-"@agent-media/cli": patch|minor|major
 ---
 
 Brief description of changes
