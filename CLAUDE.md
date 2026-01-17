@@ -147,7 +147,14 @@ git commit -m "feat|fix: descriptive message"
 ### 6. Push and create PR
 ```bash
 git push -u origin <branch-name>
+
+# Switch to TimPietrusky account for this repo (remote is github.com-private)
+gh auth switch --user TimPietrusky
+
 gh pr create --title "..." --body "..."
+
+# ALWAYS switch back to RunPod account when done
+gh auth switch --user TimPietruskyRunPod
 ```
 
 ### Important
