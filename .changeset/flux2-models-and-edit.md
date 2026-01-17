@@ -4,7 +4,6 @@
 "@agent-media/providers": minor
 "@agent-media/image": minor
 "@agent-media/audio": minor
-"@agent-media/cli": minor
 ---
 
 Update to FLUX.2 models and add edit support to fal/replicate
