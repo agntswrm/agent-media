@@ -56,7 +56,7 @@ agent-media audio transcribe --in <audio>           # Transcribe audio to text
 
 ---
 
-### Resize
+### resize
 
 ```bash
 agent-media image resize --in photo.jpg --width 800
@@ -72,7 +72,7 @@ agent-media image resize --in photo.jpg --width 800 --height 600
 | `--out <dir>` | Output directory |
 | `--provider <name>` | Provider (local) |
 
-### Convert
+### convert
 
 ```bash
 agent-media image convert --in photo.png --format webp
@@ -88,7 +88,7 @@ agent-media image convert --in photo.png --format jpg --quality 90
 | `--out <dir>` | Output directory |
 | `--provider <name>` | Provider (local) |
 
-### Remove Background
+### remove-background
 
 ```bash
 agent-media image remove-background --in portrait.jpg
@@ -101,7 +101,7 @@ agent-media image remove-background --in https://example.com/photo.jpg
 | `--out <dir>` | Output directory |
 | `--provider <name>` | Provider (fal, replicate) |
 
-### Generate
+### generate
 
 ```bash
 agent-media image generate --prompt "a cat wearing a hat"
@@ -117,7 +117,7 @@ agent-media image generate --prompt "sunset over mountains" --width 1024 --heigh
 | `--provider <name>` | Provider (fal, replicate, runpod) |
 | `--model <name>` | Model override (e.g., `fal-ai/flux-2`, `black-forest-labs/flux-2-dev`) |
 
-### Extend
+### extend
 
 Extend image canvas by adding padding on all sides with a solid background color.
 
@@ -135,7 +135,7 @@ agent-media image extend --in photo.png --padding 100 --color "#FFFFFF" --dpi 30
 | `--out <dir>` | Output directory |
 | `--provider <name>` | Provider (local) |
 
-### Edit
+### edit
 
 Edit an image using a text prompt (image-to-image).
 
@@ -152,7 +152,7 @@ agent-media image edit --in portrait.jpg --prompt "add sunglasses"
 | `--provider <name>` | Provider (fal, replicate, runpod) |
 | `--model <name>` | Model override (e.g., `fal-ai/flux-2/edit`) |
 
-### Audio Extract
+### audio extract
 
 Extract audio track from a video file. Uses local ffmpeg, no API key needed.
 
@@ -167,7 +167,7 @@ agent-media audio extract --in video.mp4 --format wav
 | `--format <f>` | Output format: mp3, wav (default: mp3) |
 | `--out <dir>` | Output directory |
 
-### Audio Transcribe
+### audio transcribe
 
 Transcribe audio to text with timestamps. Supports speaker identification.
 
@@ -220,68 +220,14 @@ Exit code is `0` on success, `1` on error.
 
 ### Default Models
 
-| Provider | generate | edit | remove-background | transcribe |
-|----------|----------|------|-------------------|------------|
-| **fal** | `fal-ai/flux-2` | `fal-ai/flux-2/edit` | `fal-ai/birefnet/v2` | `fal-ai/wizper` |
-| **replicate** | `black-forest-labs/flux-2-dev` | `black-forest-labs/flux-kontext-dev` | `men1scus/birefnet` | WhisperX |
-| **runpod** | `alibaba/wan-2.6` | `google/nano-banana-pro-edit` | - | - |
-| **local** | - | - | - | - |
+| Provider | resize | convert | extend | generate | edit | remove-background | transcribe |
+|----------|--------|---------|--------|----------|------|-------------------|------------|
+| **local** | ✓ | ✓ | ✓ | - | - | - | - |
+| **fal** | - | - | - | `fal-ai/flux-2` | `fal-ai/flux-2/edit` | `fal-ai/birefnet/v2` | `fal-ai/wizper` |
+| **replicate** | - | - | - | `black-forest-labs/flux-2-dev` | `black-forest-labs/flux-kontext-dev` | `men1scus/birefnet` | WhisperX |
+| **runpod** | - | - | - | `alibaba/wan-2.6` | `google/nano-banana-pro-edit` | - | - |
 
 Use `--model <name>` to override the default model for any command.
-
-### Local (default)
-
-Uses Sharp for image processing. No API key required.
-
-**Supports:** resize, convert, extend
-
-```bash
-agent-media image resize --in photo.jpg --width 800  # Uses local automatically
-```
-
-### Fal
-
-Uses fal.ai for AI-powered image and audio operations.
-
-**Supports:** generate, edit, remove-background, transcribe
-
-```bash
-export FAL_API_KEY=your-key
-agent-media image generate --prompt "a red robot"
-agent-media image edit --in photo.jpg --prompt "add a hat"
-agent-media image remove-background --in photo.jpg
-agent-media audio transcribe --in audio.mp3
-```
-
-[Get your FAL API key](https://fal.ai/dashboard/keys)
-
-### Replicate
-
-Uses Replicate for AI-powered image and audio operations.
-
-**Supports:** generate, edit, remove-background, transcribe
-
-```bash
-export REPLICATE_API_TOKEN=your-token
-agent-media image generate --prompt "a red robot" --provider replicate
-agent-media image edit --in photo.jpg --prompt "add a hat" --provider replicate
-```
-
-[Get your Replicate API token](https://replicate.com/account/api-tokens)
-
-### Runpod
-
-Uses Runpod for AI-powered image generation and editing.
-
-**Supports:** generate, edit
-
-```bash
-export RUNPOD_API_KEY=your-key
-agent-media image generate --prompt "a red robot" --provider runpod
-agent-media image edit --in photo.jpg --prompt "add sunglasses" --provider runpod
-```
-
-[Get your Runpod API key](https://www.runpod.io/console/user/settings)
 
 ### Provider Selection
 
