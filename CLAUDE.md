@@ -55,9 +55,9 @@ packages/
 
 **Local Provider**: Uses Sharp for zero-config image operations (resize, convert) without external APIs.
 
-**Fal Provider**: Uses @ai-sdk/fal for image generation (flux/schnell) and background removal (birefnet/v2). Requires `FAL_API_KEY`.
+**Fal Provider**: Uses @ai-sdk/fal for image generation (fal-ai/flux-2), image editing (fal-ai/flux-2/edit), and background removal (birefnet/v2). Requires `FAL_API_KEY`.
 
-**Replicate Provider**: Uses @ai-sdk/replicate for image generation (flux-schnell) and background removal (birefnet v1). Requires `REPLICATE_API_TOKEN`. Note: Replicate only has BiRefNet v1 (legacy), while fal has v2.
+**Replicate Provider**: Uses @ai-sdk/replicate for image generation (black-forest-labs/flux-2-dev), image editing (black-forest-labs/flux-kontext-dev), and background removal (birefnet). Requires `REPLICATE_API_TOKEN`.
 
 **Runpod Provider**: Uses @runpod/ai-sdk-provider for image generation (alibaba/wan-2.6) and image editing (google/nano-banana-pro-edit). Requires `RUNPOD_API_KEY`.
 
@@ -113,15 +113,26 @@ git diff --stat
 ```
 
 ### 3. Create a changeset file
+
+**IMPORTANT**: First verify actual package names:
+```bash
+cat packages/*/package.json | grep '"name"'
+```
+
+Actual package names (note: CLI package is `agent-media`, NOT `@agent-media/cli`):
+- `agent-media` (CLI)
+- `@agent-media/core`
+- `@agent-media/providers`
+- `@agent-media/image`
+- `@agent-media/audio`
+- `@agent-media/video`
+- `@agent-media/skills`
+
 Create `.changeset/<descriptive-name>.md`:
 ```markdown
 ---
 "agent-media": patch|minor|major
 "@agent-media/core": patch|minor|major
-"@agent-media/providers": patch|minor|major
-"@agent-media/image": patch|minor|major
-"@agent-media/audio": patch|minor|major
-"@agent-media/cli": patch|minor|major
 ---
 
 Brief description of changes
@@ -165,7 +176,7 @@ gh auth switch --user TimPietruskyRunPod
 
 ## Releasing to npm
 
-This project uses **changesets** for versioning and automated npm publishing via GitHub Actions with OIDC authentication (no npm token needed).
+This project uses **changesets** for versioning and automated npm publishing via GitHub Actions.
 
 ### How it works
 
@@ -184,7 +195,6 @@ This project uses **changesets** for versioning and automated npm publishing via
 
 - **Do NOT run `pnpm changeset version` locally** - let the GitHub Action handle it
 - **Do NOT manually create/edit CHANGELOG.md** - changesets handles it
-- The repo uses OIDC authentication with npm (via `id-token: write` permission) - no npm token secrets needed
 - Just create the changeset file, commit, push, and let automation handle the rest
 
 ### GitHub & npm Setup (for new maintainers)
@@ -194,16 +204,12 @@ This project uses **changesets** for versioning and automated npm publishing via
   - ✅ "Read and write permissions"
   - ✅ "Allow GitHub Actions to create and approve pull requests"
 - Settings → Environments: Create an environment named `npm`
-
-**npm trusted publishers (for each package):**
-- Repository: `TimPietrusky/agent-media`
-- Workflow: `release.yml`
-- Environment: `npm`
+- Settings → Secrets and variables → Actions → Repository secrets:
+  - Add `NPM_TOKEN` with an npm automation token (get from npmjs.com → Access Tokens → Generate New Token → Automation)
 
 **Adding a new package to npm:**
 1. New packages must be published manually the first time: `cd packages/<name> && npm publish --access public`
-2. Then configure trusted publishers on npm for that package
-3. Future releases via GitHub Actions will work automatically
+2. Future releases via GitHub Actions will work automatically
 
 ## Design Principles
 

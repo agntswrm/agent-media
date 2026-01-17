@@ -36,12 +36,15 @@ jobs:
       - name: Verify npm auth
         run: npm whoami --registry https://registry.npmjs.org || echo "Not authenticated yet (expected before publish)"
 
-      - name: Debug OIDC
+      - name: Debug auth setup
         run: |
           echo "Repository: ${{ github.repository }}"
-          echo "Workflow: ${{ github.workflow }}"
+          echo "Workflow: release.yml"
           echo "Environment: npm"
-          cat .npmrc || echo "No .npmrc in root"
+          echo "NPM_TOKEN secret: ${{ secrets.NPM_TOKEN && 'set' || 'not set' }}"
+          echo "NODE_AUTH_TOKEN: ${{ env.NODE_AUTH_TOKEN && 'will be set' || 'not set' }}"
+          cat .npmrc 2>/dev/null || echo "No .npmrc in root"
+          cat ~/.npmrc 2>/dev/null || echo "No .npmrc in home"
 
       - name: Create Release Pull Request or Publish
         id: changesets
@@ -53,3 +56,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
