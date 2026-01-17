@@ -11,8 +11,7 @@ Media processing CLI for AI agents.
 **Requires API key** ([fal.ai](https://fal.ai/dashboard/keys), [replicate](https://replicate.com/account/api-tokens), or [runpod](https://www.runpod.io/console/user/settings))
 
 ```bash
-# Set your API key
-export FAL_API_KEY=your-key
+# Export one of: FAL_API_KEY, REPLICATE_API_TOKEN, RUNPOD_API_KEY
 
 # Generate an image
 npx agent-media image generate --prompt "a robot painting a sunset"
