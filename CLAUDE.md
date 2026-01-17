@@ -24,7 +24,7 @@ node packages/cli/dist/index.js image <action> [options]
 
 ## Architecture
 
-This is a **pnpm monorepo** with six packages:
+This is a **pnpm monorepo** with seven packages:
 
 ```
 packages/
@@ -60,6 +60,12 @@ packages/
 **Replicate Provider**: Uses @ai-sdk/replicate for image generation (flux-schnell) and background removal (birefnet v1). Requires `REPLICATE_API_TOKEN`. Note: Replicate only has BiRefNet v1 (legacy), while fal has v2.
 
 **Runpod Provider**: Uses @runpod/ai-sdk-provider for image generation (alibaba/wan-2.6) and image editing (google/nano-banana-pro-edit). Requires `RUNPOD_API_KEY`.
+
+**Input Support**: All providers support both local file paths and URLs as input. Local files are handled via:
+- Local provider: `createReadStream()` → Buffer → Sharp
+- Fal provider: `readFile()` → base64 data URI (images) or `fal.storage.upload()` (audio)
+- Replicate provider: `readFile()` → Buffer (images) or data URI (audio)
+- Runpod provider: `readFile()` → Buffer
 
 ### Adding a New Provider
 
@@ -120,6 +126,24 @@ This project uses **changesets** for versioning and automated npm publishing via
 - **Do NOT run `pnpm changeset version` locally** - let the GitHub Action handle it
 - The repo uses OIDC authentication with npm (via `id-token: write` permission) - no npm token secrets needed
 - Just create the changeset file, commit, push, and let automation handle the rest
+
+### GitHub & npm Setup (for new maintainers)
+
+**GitHub repo settings required:**
+- Settings → Actions → General → Workflow permissions:
+  - ✅ "Read and write permissions"
+  - ✅ "Allow GitHub Actions to create and approve pull requests"
+- Settings → Environments: Create an environment named `npm`
+
+**npm trusted publishers (for each package):**
+- Repository: `TimPietrusky/agent-media`
+- Workflow: `release.yml`
+- Environment: `npm`
+
+**Adding a new package to npm:**
+1. New packages must be published manually the first time: `cd packages/<name> && npm publish --access public`
+2. Then configure trusted publishers on npm for that package
+3. Future releases via GitHub Actions will work automatically
 
 ## Design Principles
 
