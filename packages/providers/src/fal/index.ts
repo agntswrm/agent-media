@@ -123,7 +123,7 @@ async function executeGenerate(
 }
 
 /**
- * Execute edit action using fal.ai flux-2 edit model
+ * Execute edit action using fal.ai flux-2 edit model via AI SDK
  * Default model: fal-ai/flux-2/edit
  */
 async function executeEdit(
@@ -141,64 +141,45 @@ async function executeEdit(
     return createError(ErrorCodes.INVALID_INPUT, 'Prompt is required for image editing');
   }
 
-  // Prepare the image URL - edit model requires a URL
-  let imageUrl: string;
+  // Prepare the image as a data URL for the fal API
+  let imageDataUrl: string;
   if (input.isUrl) {
-    imageUrl = input.source;
+    // For URLs, fetch and convert to data URL
+    const response = await fetch(input.source);
+    if (!response.ok) {
+      return createError(ErrorCodes.NETWORK_ERROR, `Failed to fetch input image: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64 = buffer.toString('base64');
+    const contentType = response.headers.get('content-type') || 'image/png';
+    imageDataUrl = `data:${contentType};base64,${base64}`;
   } else {
-    // Convert local file to data URI
+    // For local files, read and convert to data URL
     const buffer = await readFile(input.source);
     const base64 = buffer.toString('base64');
     const ext = input.source.toLowerCase().split('.').pop();
     const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
-    imageUrl = `data:${mimeType};base64,${base64}`;
+    imageDataUrl = `data:${mimeType};base64,${base64}`;
   }
 
+  const falClient = createFal({ apiKey });
   const modelId = model || 'fal-ai/flux-2/edit';
 
-  // Call the edit model via fal.run API
-  const response = await fetch(`https://fal.run/${modelId}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'application/json',
+  const { image } = await generateImage({
+    model: falClient.image(modelId),
+    prompt,
+    providerOptions: {
+      fal: {
+        image_urls: [imageDataUrl],
+      },
     },
-    body: JSON.stringify({
-      image_url: imageUrl,
-      prompt,
-    }),
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    return createError(ErrorCodes.API_ERROR, `Fal API error: ${response.status} - ${errorText}`);
-  }
-
-  const result = await response.json() as {
-    images?: Array<{ url: string; content_type?: string }>;
-    image?: { url: string; content_type?: string };
-  };
-
-  // Handle both single image and array responses
-  const outputImageUrl = result.images?.[0]?.url || result.image?.url;
-
-  if (!outputImageUrl) {
-    return createError(ErrorCodes.PROVIDER_ERROR, 'No image returned from edit operation');
-  }
-
-  // Download the edited image
-  const imageResponse = await fetch(outputImageUrl);
-  if (!imageResponse.ok) {
-    return createError(ErrorCodes.NETWORK_ERROR, `Failed to download edited image: ${imageResponse.statusText}`);
-  }
-
-  const arrayBuffer = await imageResponse.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
 
   const outputFilename = resolveOutputFilename('png', 'edited', context.outputName, context.inputSource);
   const outputPath = getOutputPath(context.outputDir, outputFilename);
 
-  await writeFile(outputPath, buffer);
+  await writeFile(outputPath, image.uint8Array);
 
   const stats = await stat(outputPath);
 
@@ -214,7 +195,7 @@ async function executeEdit(
 
 /**
  * Execute remove-background action using fal.ai birefnet/v2 model
- * Uses direct API call since birefnet is an image processing model, not generative
+ * Uses fal client SDK for proper API interaction
  */
 async function executeRemoveBackground(
   options: RemoveBackgroundOptions,
@@ -227,6 +208,9 @@ async function executeRemoveBackground(
     return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for background removal');
   }
 
+  // Configure fal client with API key
+  fal.config({ credentials: apiKey });
+
   // Prepare the image URL - birefnet requires a URL
   let imageUrl: string;
   if (input.isUrl) {
@@ -235,33 +219,22 @@ async function executeRemoveBackground(
     // Convert local file to data URI
     const buffer = await readFile(input.source);
     const base64 = buffer.toString('base64');
-    // Detect mime type from extension
     const ext = input.source.toLowerCase().split('.').pop();
     const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
     imageUrl = `data:${mimeType};base64,${base64}`;
   }
 
-  // Call birefnet/v2 directly via fal.run API
-  const response = await fetch('https://fal.run/fal-ai/birefnet/v2', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  // Call birefnet/v2 via fal client SDK
+  const response = await fal.run('fal-ai/birefnet/v2', {
+    input: {
       image_url: imageUrl,
       model: 'General Use (Light)',
       output_format: 'png',
       refine_foreground: true,
-    }),
+    },
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    return createError(ErrorCodes.API_ERROR, `Fal API error: ${response.status} - ${errorText}`);
-  }
-
-  const result = await response.json() as {
+  const result = response.data as {
     image: {
       url: string;
       content_type: string;
@@ -360,38 +333,36 @@ async function executeTranscribe(
   // whisper supports diarization
   const model = diarize ? 'fal-ai/whisper' : 'fal-ai/wizper';
 
-  // Build request body
-  const requestBody: Record<string, unknown> = {
+  // Build request input
+  const requestInput: {
+    audio_url: string;
+    chunk_level: string;
+    diarize?: boolean;
+    num_speakers?: number;
+    language?: string;
+  } = {
     audio_url: audioUrl,
     chunk_level: 'segment',
   };
 
   if (diarize) {
-    requestBody['diarize'] = true;
+    requestInput.diarize = true;
     if (numSpeakers) {
-      requestBody['num_speakers'] = numSpeakers;
+      requestInput.num_speakers = numSpeakers;
     }
   }
 
   if (language) {
-    requestBody['language'] = language;
+    requestInput.language = language;
   }
 
-  const response = await fetch(`https://fal.run/${model}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody),
+  // Call transcription model via fal client SDK
+  // Using type assertion to bypass strict typing for dynamic model selection
+  const response = await (fal.run as (endpoint: string, options: { input: unknown }) => Promise<{ data: unknown }>)(model, {
+    input: requestInput,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    return createError(ErrorCodes.API_ERROR, `Fal API error: ${response.status} - ${errorText}`);
-  }
-
-  const result = await response.json() as {
+  const result = response.data as {
     text: string;
     chunks?: Array<{
       timestamp: [number, number];
