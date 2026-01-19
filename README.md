@@ -16,9 +16,9 @@ Uses [Sharp](https://sharp.pixelplumbing.com/) for image operations and [transfo
 bunx agent-media@latest image resize --in sunset-mountains.jpg --width 800
 bunx agent-media@latest image convert --in sunset-mountains.png --format webp
 bunx agent-media@latest image extend --in sunset-mountains.jpg --padding 50 --color "#FFFFFF"
-bunx agent-media@latest image remove-background --in portrait-headshot.png
-bunx agent-media@latest audio extract --in video.mp4
-bunx agent-media@latest audio transcribe --in audio.mp3
+bunx agent-media@latest image remove-background --in man-portrait.png
+bunx agent-media@latest audio extract --in woman-greeting.mp4
+bunx agent-media@latest audio transcribe --in woman-greeting.mp3
 ```
 
 > **Note**: You may see a `mutex lock failed` error with local AI processing — ignore it, the output is correct if JSON shows `"ok": true`.
@@ -49,10 +49,10 @@ bunx agent-media@latest image remove-background --in .agent-media/edited_*.png
 bunx agent-media@latest video generate --prompt "ocean waves crashing on rocks"
 
 # Generate a video from an image (image-to-video with audio)
-bunx agent-media@latest video generate --in portrait.png --prompt "person smiles and waves hello" --audio
+bunx agent-media@latest video generate --in woman-portrait.png --prompt "person smiles and waves hello" --audio
 
 # Transcribe with speaker identification
-bunx agent-media@latest audio transcribe --in audio.mp3 --diarize
+bunx agent-media@latest audio transcribe --in woman-greeting.mp3 --diarize
 ```
 
 ### npx
@@ -71,10 +71,10 @@ npx agent-media@latest image remove-background --in .agent-media/edited_*.png
 npx agent-media@latest video generate --prompt "ocean waves crashing on rocks"
 
 # Generate a video from an image (image-to-video with audio)
-npx agent-media@latest video generate --in portrait.png --prompt "person smiles and waves hello" --audio
+npx agent-media@latest video generate --in woman-portrait.png --prompt "person smiles and waves hello" --audio
 
 # Transcribe with speaker identification
-npx agent-media@latest audio transcribe --in audio.mp3 --diarize
+npx agent-media@latest audio transcribe --in woman-greeting.mp3 --diarize
 ```
 
 ## Installation
@@ -206,7 +206,7 @@ Edit an image using a text prompt (image-to-image).
 
 ```bash
 agent-media@latest image edit --in sunset-mountains.jpg --prompt "make the sky more vibrant"
-agent-media@latest image edit --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/portrait-headshot.png --prompt "add sunglasses"
+agent-media@latest image edit --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/man-portrait.png --prompt "add sunglasses"
 ```
 
 | Option | Description |
@@ -222,8 +222,8 @@ agent-media@latest image edit --in https://ytrzap04kkm0giml.public.blob.vercel-s
 *API key required*
 
 ```bash
-agent-media@latest image remove-background --in portrait-headshot.png
-agent-media@latest image remove-background --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/portrait-headshot.png
+agent-media@latest image remove-background --in man-portrait.png
+agent-media@latest image remove-background --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/man-portrait.png
 ```
 
 | Option | Description |
@@ -255,7 +255,7 @@ Generate video from a text prompt. Optionally provide an input image to animate 
 agent-media@latest video generate --prompt "a cat walking through a garden"
 
 # Image-to-video (animate an image)
-agent-media@latest video generate --in portrait.png --prompt "person smiles and waves hello"
+agent-media@latest video generate --in woman-portrait.png --prompt "person smiles and waves hello"
 
 # With audio generation
 agent-media@latest video generate --prompt "fireworks in the night sky" --audio --duration 10
@@ -296,8 +296,9 @@ agent-media@latest audio transcribe --in <audio>
 Extract audio track from a video file.
 
 ```bash
-agent-media@latest audio extract --in video.mp4
-agent-media@latest audio extract --in video.mp4 --format wav
+agent-media@latest audio extract --in woman-greeting.mp4
+agent-media@latest audio extract --in woman-greeting.mp4 --format wav
+agent-media@latest audio extract --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/woman-greeting.mp4
 ```
 
 | Option | Description |
@@ -313,8 +314,9 @@ agent-media@latest audio extract --in video.mp4 --format wav
 Transcribe audio to text with timestamps. Supports speaker identification.
 
 ```bash
-agent-media@latest audio transcribe --in audio.mp3
-agent-media@latest audio transcribe --in audio.mp3 --diarize --speakers 2
+agent-media@latest audio transcribe --in woman-greeting.mp3
+agent-media@latest audio transcribe --in woman-greeting.mp3 --diarize --speakers 2
+agent-media@latest audio transcribe --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/woman-greeting.mp3
 ```
 
 | Option | Description |

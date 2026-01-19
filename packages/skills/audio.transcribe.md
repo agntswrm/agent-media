@@ -76,7 +76,7 @@ To transcribe a video file, first extract the audio:
 
 ```bash
 # Step 1: Extract audio from video
-agent-media audio extract --in video.mp4 --format mp3
+agent-media audio extract --in woman-greeting.mp4 --format mp3
 
 # Step 2: Transcribe the extracted audio
 agent-media audio transcribe --in .agent-media/extracted_xxx.mp3
