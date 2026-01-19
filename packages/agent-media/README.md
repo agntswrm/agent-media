@@ -323,7 +323,7 @@ Exit code is `0` on success, `1` on error.
 | **local** | ✓ | ✓ | ✓ | - | - | - | - | - |
 | **transformers** | - | - | - | - | - | `Xenova/modnet` | - | `moonshine-base` |
 | **fal** | - | - | - | `fal-ai/flux-2` | `fal-ai/flux-2/edit` | `fal-ai/birefnet/v2` | `fal-ai/ltx-2` | `fal-ai/wizper` |
-| **replicate** | - | - | - | `black-forest-labs/flux-2-dev` | `black-forest-labs/flux-kontext-dev` | `men1scus/birefnet` | `lightricks/ltx-video` | WhisperX |
+| **replicate** | - | - | - | `black-forest-labs/flux-2-dev` | `black-forest-labs/flux-kontext-dev` | `men1scus/birefnet` | `lightricks/ltx-video` | `whisper-diarization` |
 | **runpod** | - | - | - | `alibaba/wan-2.6` | `google/nano-banana-pro-edit` | - | - | - |
 
 Use `--model <name>` to override the default model for any command.
@@ -342,7 +342,6 @@ Use `--model <name>` to override the default model for any command.
 | `FAL_API_KEY` | fal.ai API key | [fal.ai](https://fal.ai/dashboard/keys) |
 | `REPLICATE_API_TOKEN` | Replicate API token | [replicate.com](https://replicate.com/account/api-tokens) |
 | `RUNPOD_API_KEY` | Runpod API key | [runpod.io](https://www.runpod.io/console/user/settings) |
-| `HUGGINGFACE_ACCESS_TOKEN` | For transcription with speaker ID (replicate only) | [huggingface.co](https://huggingface.co/settings/tokens) |
 | `AGENT_MEDIA_DIR` | Output directory (default: `.agent-media/`) | - |
 
 ## Roadmap

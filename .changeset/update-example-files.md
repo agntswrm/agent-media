@@ -1,9 +1,12 @@
 ---
 "agent-media": patch
+"@agent-media/providers": patch
 ---
 
-Update example files and documentation with new assets
+Update Replicate transcription and documentation
 
+- Switch Replicate transcription to thomasmol/whisper-diarization model
+- Remove HUGGINGFACE_ACCESS_TOKEN requirement (no longer needed)
 - Add woman-portrait.png (16:9 portrait for video generation)
 - Add woman-greeting.mp4 (talking avatar video example)
 - Add woman-greeting.mp3 (extracted speech audio example)

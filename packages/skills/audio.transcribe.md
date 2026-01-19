@@ -107,9 +107,9 @@ agent-media audio transcribe --in audio.mp3 --provider transformers
 ### replicate
 
 - Requires `REPLICATE_API_TOKEN`
-- Uses `whisperx` model with 70x realtime speed
-- Diarization requires `HUGGINGFACE_ACCESS_TOKEN` environment variable (for pyannote model access)
-- Provides word-level timestamps with alignment
+- Uses `whisper-diarization` model with Whisper Large V3 Turbo
+- Native diarization support (no additional tokens required)
+- Provides word-level timestamps with speaker identification
 
 ## Environment Variables
 
@@ -117,4 +117,3 @@ agent-media audio transcribe --in audio.mp3 --provider transformers
 |----------|----------|--------------|
 | `FAL_API_KEY` | fal | All transcription |
 | `REPLICATE_API_TOKEN` | replicate | All transcription |
-| `HUGGINGFACE_ACCESS_TOKEN` | replicate | Diarization only |

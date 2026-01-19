@@ -98,7 +98,6 @@ packages/
 - `FAL_API_KEY` - fal provider (generate, remove-background, transcribe)
 - `REPLICATE_API_TOKEN` - replicate provider (generate, remove-background, transcribe)
 - `RUNPOD_API_KEY` - runpod provider (generate, edit)
-- `HUGGINGFACE_ACCESS_TOKEN` - replicate provider (transcribe with diarization only)
 - `AGENT_MEDIA_DIR` - Custom output directory (default: `.agent-media/`)
 
 ## Commit Workflow
