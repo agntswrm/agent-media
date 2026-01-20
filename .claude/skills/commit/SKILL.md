@@ -66,15 +66,10 @@ git commit -m "feat|fix: descriptive message"
 
 ```bash
 git push -u origin <branch-name>
-
-
-
-
 gh pr create --title "..." --body "..."
-
-
-
 ```
+
+> **Note:** If you need to switch GitHub accounts for PR creation, check `.claude.local/workflow.md` for your personal account switching commands.
 
 ## Important reminders
 
