@@ -1,6 +1,6 @@
 import { createFal } from '@ai-sdk/fal';
 import { fal } from '@fal-ai/client';
-import { generateImage } from 'ai';
+import { generateImage, experimental_transcribe as transcribe } from 'ai';
 import { writeFile, readFile, stat } from 'node:fs/promises';
 import type {
   MediaProvider,
@@ -272,7 +272,7 @@ async function executeRemoveBackground(
 }
 
 /**
- * Execute transcribe action using fal.ai whisper models
+ * Execute transcribe action using fal.ai whisper models via AI SDK
  * Uses wizper (faster) when diarize=false, whisper when diarize=true
  */
 async function executeTranscribe(
@@ -286,101 +286,55 @@ async function executeTranscribe(
     return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for transcription');
   }
 
-  // Configure fal client with API key
-  fal.config({ credentials: apiKey });
+  const falClient = createFal({ apiKey });
 
-  // Prepare the audio URL
-  let audioUrl: string;
+  // Prepare audio input - AI SDK accepts Buffer, Uint8Array, or URL
+  let audioInput: Buffer | string;
   if (input.isUrl) {
-    audioUrl = input.source;
+    audioInput = input.source;
   } else {
-    // Upload local file using fal client
-    const buffer = await readFile(input.source);
-    const ext = input.source.toLowerCase().split('.').pop();
-    let mimeType: string;
-    switch (ext) {
-      case 'mp3':
-        mimeType = 'audio/mpeg';
-        break;
-      case 'wav':
-        mimeType = 'audio/wav';
-        break;
-      case 'mp4':
-        mimeType = 'video/mp4';
-        break;
-      case 'm4a':
-        mimeType = 'audio/mp4';
-        break;
-      case 'webm':
-        mimeType = 'video/webm';
-        break;
-      case 'ogg':
-        mimeType = 'audio/ogg';
-        break;
-      default:
-        mimeType = 'application/octet-stream';
-    }
-
-    // Create a Blob from the buffer and upload via fal client
-    const filename = input.source.split('/').pop() || 'audio';
-    const blob = new Blob([buffer], { type: mimeType });
-    const file = new File([blob], filename, { type: mimeType });
-    audioUrl = await fal.storage.upload(file);
+    audioInput = await readFile(input.source);
   }
 
   // Select model based on diarize flag
   // wizper is 2x faster but doesn't support diarization
   // whisper supports diarization
-  const model = diarize ? 'fal-ai/whisper' : 'fal-ai/wizper';
+  const modelId = diarize ? 'whisper' : 'wizper';
 
-  // Build request input
-  const requestInput: {
-    audio_url: string;
-    chunk_level: string;
-    diarize?: boolean;
-    num_speakers?: number;
-    language?: string;
-  } = {
-    audio_url: audioUrl,
-    chunk_level: 'segment',
+  // Build provider options for fal
+  const providerOptions: Record<string, unknown> = {
+    chunkLevel: 'segment',
   };
 
   if (diarize) {
-    requestInput.diarize = true;
+    providerOptions['diarize'] = true;
     if (numSpeakers) {
-      requestInput.num_speakers = numSpeakers;
+      providerOptions['numSpeakers'] = numSpeakers;
     }
   }
 
   if (language) {
-    requestInput.language = language;
+    providerOptions['language'] = language;
   }
 
-  // Call transcription model via fal client SDK
-  // Using type assertion to bypass strict typing for dynamic model selection
-  const response = await (fal.run as (endpoint: string, options: { input: unknown }) => Promise<{ data: unknown }>)(model, {
-    input: requestInput,
+  // Call transcription via AI SDK
+  const result = await transcribe({
+    model: falClient.transcription(modelId),
+    audio: audioInput,
+    providerOptions: {
+      fal: providerOptions as Record<string, string | number | boolean>,
+    },
   });
 
-  const result = response.data as {
-    text: string;
-    chunks?: Array<{
-      timestamp: [number, number];
-      text: string;
-      speaker?: string;
-    }>;
-    inferred_languages?: string[];
-  };
-
   // Transform to our TranscriptionData format
+  // AI SDK uses startSecond/endSecond for segment timestamps
   const transcription: TranscriptionData = {
     text: result.text || '',
-    language: result.inferred_languages?.[0] || language || 'unknown',
-    segments: (result.chunks || []).map(chunk => ({
-      start: chunk.timestamp[0],
-      end: chunk.timestamp[1],
-      text: chunk.text,
-      ...(chunk.speaker ? { speaker: chunk.speaker } : {}),
+    language: result.language || language || 'unknown',
+    segments: (result.segments || []).map(segment => ({
+      start: segment.startSecond,
+      end: segment.endSecond,
+      text: segment.text,
     })),
   };
 
