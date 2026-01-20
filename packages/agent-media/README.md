@@ -184,8 +184,8 @@ agent-media image generate --prompt "sunset over mountains" --width 1024 --heigh
 | Option | Description |
 |--------|-------------|
 | `--prompt <text>` | Text description (required) |
-| `--width <px>` | Width (default: 1024) |
-| `--height <px>` | Height (default: 1024) |
+| `--width <px>` | Width (default: 1280) |
+| `--height <px>` | Height (default: 720) |
 | `--out <path>` | Output path (filename or directory) |
 | `--provider <name>` | Provider (fal, replicate, runpod, ai-gateway) |
 | `--model <name>` | Model override (e.g., `fal-ai/flux-2`, `bfl/flux-2-pro`) |

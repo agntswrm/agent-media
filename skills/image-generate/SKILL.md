@@ -18,8 +18,8 @@ agent-media image generate --prompt <text> [options]
 | Option | Required | Description |
 |--------|----------|-------------|
 | `--prompt` | Yes | Text description of the image to generate |
-| `--width` | No | Width of the generated image in pixels |
-| `--height` | No | Height of the generated image in pixels |
+| `--width` | No | Width of the generated image in pixels (default: 1280) |
+| `--height` | No | Height of the generated image in pixels (default: 720) |
 | `--count` | No | Number of images to generate (default: 1) |
 | `--out` | No | Output path (filename or directory) |
 | `--provider` | No | Provider to use (default: auto-detect) |
