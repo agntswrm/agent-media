@@ -1,5 +1,22 @@
 # @agent-media/audio
 
+## 0.5.0
+
+### Minor Changes
+
+- 1383717: Change default output directory from `.agent-media/` to current working directory
+
+  Files are now written to the current working directory by default instead of a `.agent-media/` subfolder. This makes the tool easier to use in pipelines where output files need to be in the current directory.
+
+  - `--out` flag still works to override the output directory
+  - `AGENT_MEDIA_DIR` environment variable still works to set a custom default
+
+### Patch Changes
+
+- Updated dependencies [1383717]
+  - @agent-media/core@0.9.0
+  - @agent-media/providers@0.8.1
+
 ## 0.4.6
 
 ### Patch Changes
