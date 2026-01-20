@@ -166,12 +166,12 @@ describe('Replicate Provider', () => {
   });
 });
 
-describe('RunPod Provider', () => {
+describe('Runpod Provider', () => {
   const hasApiKey = !!process.env.RUNPOD_API_KEY;
 
   beforeAll(() => {
     if (!hasApiKey) {
-      console.warn('Skipping RunPod tests: RUNPOD_API_KEY not set');
+      console.warn('Skipping Runpod tests: RUNPOD_API_KEY not set');
     }
   });
 
