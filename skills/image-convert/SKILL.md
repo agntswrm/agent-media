@@ -20,7 +20,7 @@ agent-media image convert --in <path> --format <format> [options]
 | `--in` | Yes | Input file path or URL |
 | `--format` | Yes | Output format: `png`, `jpg`, `webp` |
 | `--quality` | No | Quality for lossy formats (1-100, default: 80) |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (default: auto-detect) |
 
 ## Output

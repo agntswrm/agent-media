@@ -18,7 +18,7 @@ agent-media image remove-background --in <path> [options]
 | Option | Required | Description |
 |--------|----------|-------------|
 | `--in` | Yes | Input file path or URL |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (local, fal, replicate) |
 
 ## Output

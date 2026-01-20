@@ -31,7 +31,7 @@ imageCommand
   .requiredOption('--in <path>', 'Input file path or URL')
   .option('--width <pixels>', 'Target width in pixels', parseInt)
   .option('--height <pixels>', 'Target height in pixels', parseInt)
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (local, fal, replicate, runpod)')
   .action(async (options: {
     in: string;
@@ -66,7 +66,7 @@ imageCommand
   .option('--dpi <number>', 'DPI/density for output image (default: 72)', parseInt)
   .option('--width <pixels>', 'Target width in pixels', parseInt)
   .option('--height <pixels>', 'Target height in pixels', parseInt)
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (local, fal, replicate, runpod)')
   .action(async (options: {
     in: string;
@@ -102,7 +102,7 @@ imageCommand
   .command('remove-background')
   .description('Remove the background from an image')
   .requiredOption('--in <path>', 'Input file path or URL')
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (local, fal, replicate)')
   .option('--model <name>', 'Model to use (overrides provider default)')
   .action(async (options: {
@@ -135,7 +135,7 @@ imageCommand
   .option('--height <pixels>', 'Height of the generated image', parseInt)
   .option('--count <number>', 'Number of images to generate', parseInt)
   .option('--seed <number>', 'Seed for reproducible image generation', parseInt)
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (fal, replicate, runpod, ai-gateway)')
   .option('--model <name>', 'Model to use (overrides provider default, e.g., fal-ai/flux-2)')
   .action(async (options: {
@@ -175,7 +175,7 @@ imageCommand
   .requiredOption('--padding <pixels>', 'Padding size in pixels to add on all sides', parseInt)
   .requiredOption('--color <hex>', 'Background color for extended area (e.g., "#E4ECF8"). Also flattens transparency.')
   .option('--dpi <number>', 'DPI/density for output image (default: 300)', parseInt)
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (local)')
   .action(async (options: {
     in: string;
@@ -208,7 +208,7 @@ imageCommand
   .description('Edit an image using a text prompt (image-to-image)')
   .requiredOption('--in <path>', 'Input file path or URL')
   .requiredOption('--prompt <text>', 'Text description of the desired edit')
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (fal, replicate, runpod, ai-gateway)')
   .option('--model <name>', 'Model to use (overrides provider default, e.g., fal-ai/flux-2/edit)')
   .action(async (options: {
@@ -244,7 +244,7 @@ imageCommand
   .option('--focus-x <percent>', 'Focal point X position 0-100 (default: 50)', parseInt)
   .option('--focus-y <percent>', 'Focal point Y position 0-100 (default: 50)', parseInt)
   .option('--dpi <number>', 'DPI/density for output (default: 300)', parseInt)
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (local)')
   .action(async (options: {
     in: string;
@@ -286,7 +286,7 @@ audioCommand
   .description('Extract audio track from a video file (local processing, no API needed)')
   .requiredOption('--in <path>', 'Input video file path or URL')
   .option('--format <format>', 'Output audio format (mp3, wav)', 'mp3')
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .action(async (options: {
     in: string;
     format?: string;
@@ -358,7 +358,7 @@ videoCommand
   .option('--resolution <res>', 'Video resolution (720p, 1080p)')
   .option('--fps <rate>', 'Frame rate (25 or 50)', parseInt)
   .option('--audio', 'Generate audio track')
-  .option('--out <path>', 'Output path (filename or directory)')
+  .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (fal, replicate, runpod)')
   .option('--model <name>', 'Model to use (overrides provider default)')
   .action(async (options: {

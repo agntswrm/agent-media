@@ -23,7 +23,7 @@ agent-media video generate --prompt <text> [options]
 | `--resolution` | No | Video resolution (720p, 1080p, 1440p, 2160p; default: 720p) |
 | `--fps` | No | Frame rate (25 or 50; default: 25) |
 | `--audio` | No | Generate audio track |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (default: auto-detect) |
 | `--model` | No | Model to use (overrides provider default) |
 

@@ -20,7 +20,7 @@ agent-media image resize --in <path> [options]
 | `--in` | Yes | Input file path or URL |
 | `--width` | No | Target width in pixels |
 | `--height` | No | Target height in pixels |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (default: auto-detect) |
 
 At least one of `--width` or `--height` must be specified.

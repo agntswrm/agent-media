@@ -23,7 +23,7 @@ agent-media image crop --in <path> --width <px> --height <px> [options]
 | `--focus-x` | No | Focal point X position 0-100 (default: 50 = center) |
 | `--focus-y` | No | Focal point Y position 0-100 (default: 50 = center) |
 | `--dpi` | No | DPI/density for output (default: 300) |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (default: local) |
 
 ## Output

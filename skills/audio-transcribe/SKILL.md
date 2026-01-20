@@ -21,7 +21,7 @@ agent-media audio transcribe --in <path> [options]
 | `--diarize` | No | Enable speaker identification |
 | `--language` | No | Language code (auto-detected if not provided) |
 | `--speakers` | No | Number of speakers hint for diarization |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (local, fal, replicate) |
 
 ## Output

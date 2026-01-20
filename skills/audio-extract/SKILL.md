@@ -19,7 +19,7 @@ agent-media audio extract --in <path> [options]
 |--------|----------|-------------|
 | `--in` | Yes | Input video file path or URL (supports mp4, webm, mkv, avi, mov) |
 | `--format` | No | Output audio format: `mp3` (default) or `wav` |
-| `--out` | No | Output path (filename or directory) |
+| `--out` | No | Output path, filename or directory (default: ./) |
 
 ## Output
 
