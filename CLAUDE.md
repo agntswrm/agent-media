@@ -50,7 +50,7 @@ skills/           # SKILL.md definitions for AI agent discovery (npx skills add 
 - `packages/core/src/provider/index.ts` - Registry and resolution logic
 - Provider resolution priority: CLI flag → env vars → local → any supporting provider
 
-**Action Layer**: Each action in `packages/image/src/actions/` or `packages/audio/src/actions/` validates input and delegates to providers via `executeAction()`.
+**Action Layer**: Each action in `packages/image/src/actions/` or `packages/audio/src/actions/` validates input and delegates to providers via `executeAction()`. Image actions: resize, convert, generate, remove-background, extend, edit, crop, upscale.
 
 **Audio Package**: The `packages/audio/` package handles audio operations:
 - `extract` - Extracts audio from video files using bundled ffmpeg (via `ffmpeg-static`). No API keys needed.
@@ -62,7 +62,7 @@ skills/           # SKILL.md definitions for AI agent discovery (npx skills add 
 
 **Local Provider**: Zero-config operations without external APIs. Uses:
 - [Sharp](https://sharp.pixelplumbing.com/) for image processing (resize, convert, extend, crop)
-- [Transformers.js](https://huggingface.co/docs/transformers.js) for ML inference (remove-background with Xenova/modnet, transcribe with Moonshine)
+- [Transformers.js](https://huggingface.co/docs/transformers.js) for ML inference (remove-background with Xenova/modnet, upscale with Swin2SR, transcribe with Moonshine)
 
 **Cloud Providers (Fal, Replicate, Runpod, AI Gateway)**: All cloud providers use AI SDK as the primary interface. See "AI SDK Usage Pattern" below.
 
@@ -130,12 +130,12 @@ const result = await transcribe({
 
 **Current provider capabilities:**
 
-| Provider | generate | edit | remove-background | transcribe | video-generate |
-|----------|----------|------|-------------------|------------|----------------|
-| **fal** | AI SDK | AI SDK | AI SDK | AI SDK | fal client SDK |
-| **replicate** | AI SDK | AI SDK | AI SDK | replicate SDK* | replicate SDK |
-| **runpod** | AI SDK | AI SDK | - | - | raw API (wan-2.6) |
-| **ai-gateway** | AI SDK | AI SDK** | - | - | - |
+| Provider | generate | edit | remove-background | upscale | transcribe | video-generate |
+|----------|----------|------|-------------------|---------|------------|----------------|
+| **fal** | AI SDK | AI SDK | AI SDK | AI SDK | AI SDK | fal client SDK |
+| **replicate** | AI SDK | AI SDK | AI SDK | AI SDK | replicate SDK* | replicate SDK |
+| **runpod** | AI SDK | AI SDK | - | - | - | raw API (wan-2.6) |
+| **ai-gateway** | AI SDK | AI SDK** | - | - | - | - |
 
 *AI SDK `@ai-sdk/replicate` doesn't support `.transcription()` method, so we use `replicate` npm package.
 
