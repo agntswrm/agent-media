@@ -51,9 +51,9 @@ Add elements to an image:
 agent-media image edit --in portrait.png --prompt "add sunglasses"
 ```
 
-Combine multiple images:
+Combine multiple images (pass multiple paths after `--in`, separated by spaces):
 ```bash
-agent-media image edit --in style.jpg content.jpg --prompt "apply the style of the first image to the second"
+agent-media image edit --in person.png landscape.jpg --prompt "place the person from the first image into the landscape from the second image"
 ```
 
 Edit with specific provider:
