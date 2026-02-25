@@ -115,7 +115,8 @@ export interface ExtendOptions {
  * Options for edit action (image-to-image with prompt)
  */
 export interface EditOptions {
-  input: MediaInput;
+  /** One or more input images for editing */
+  inputs: MediaInput[];
   /** Text prompt describing the desired edit */
   prompt: string;
   /** Override default model (e.g., "fal-ai/flux-2/edit") */

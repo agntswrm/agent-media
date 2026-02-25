@@ -123,17 +123,34 @@ async function executeGenerate(
 }
 
 /**
+ * Convert a MediaInput to a Buffer
+ */
+async function toBuffer(input: { source: string; isUrl: boolean }): Promise<Buffer> {
+  if (input.isUrl) {
+    const response = await fetch(input.source);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch input image: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  } else {
+    return readFile(input.source);
+  }
+}
+
+/**
  * Execute edit action using Runpod google/nano-banana-pro-edit model via AI SDK
+ * Supports multiple input images via prompt.images array
  */
 async function executeEdit(
   options: EditOptions,
   context: ActionContext,
   apiKey: string
 ): Promise<MediaResult> {
-  const { input, prompt } = options;
+  const { inputs, prompt } = options;
 
-  if (!input?.source) {
-    return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for image editing');
+  if (!inputs || inputs.length === 0) {
+    return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
   }
 
   if (!prompt) {
@@ -142,24 +159,14 @@ async function executeEdit(
 
   const runpod = createRunpod({ apiKey });
 
-  // Prepare the image input
-  let imageBuffer: Buffer;
-  if (input.isUrl) {
-    const response = await fetch(input.source);
-    if (!response.ok) {
-      return createError(ErrorCodes.NETWORK_ERROR, `Failed to fetch image: ${response.statusText}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    imageBuffer = Buffer.from(arrayBuffer);
-  } else {
-    imageBuffer = await readFile(input.source);
-  }
+  // Convert all inputs to buffers
+  const imageBuffers = await Promise.all(inputs.map(toBuffer));
 
   const { image } = await generateImage({
     model: runpod.image('google/nano-banana-pro-edit'),
     prompt: {
       text: prompt,
-      images: [imageBuffer],
+      images: imageBuffers,
     },
   });
 

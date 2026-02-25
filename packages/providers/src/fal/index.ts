@@ -126,45 +126,50 @@ async function executeGenerate(
 }
 
 /**
+ * Convert a MediaInput to a base64 data URL
+ */
+async function toDataUrl(input: { source: string; isUrl: boolean }): Promise<string> {
+  if (input.isUrl) {
+    const response = await fetch(input.source);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch input image: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64 = buffer.toString('base64');
+    const contentType = response.headers.get('content-type') || 'image/png';
+    return `data:${contentType};base64,${base64}`;
+  } else {
+    const buffer = await readFile(input.source);
+    const base64 = buffer.toString('base64');
+    const ext = input.source.toLowerCase().split('.').pop();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+    return `data:${mimeType};base64,${base64}`;
+  }
+}
+
+/**
  * Execute edit action using fal.ai flux-2 edit model via AI SDK
  * Default model: fal-ai/flux-2/edit
+ * Supports multiple input images via providerOptions.fal.image_urls array
  */
 async function executeEdit(
   options: EditOptions,
   context: ActionContext,
   apiKey: string
 ): Promise<MediaResult> {
-  const { input, prompt, model } = options;
+  const { inputs, prompt, model } = options;
 
-  if (!input?.source) {
-    return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for image editing');
+  if (!inputs || inputs.length === 0) {
+    return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
   }
 
   if (!prompt) {
     return createError(ErrorCodes.INVALID_INPUT, 'Prompt is required for image editing');
   }
 
-  // Prepare the image as a data URL for the fal API
-  let imageDataUrl: string;
-  if (input.isUrl) {
-    // For URLs, fetch and convert to data URL
-    const response = await fetch(input.source);
-    if (!response.ok) {
-      return createError(ErrorCodes.NETWORK_ERROR, `Failed to fetch input image: ${response.statusText}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString('base64');
-    const contentType = response.headers.get('content-type') || 'image/png';
-    imageDataUrl = `data:${contentType};base64,${base64}`;
-  } else {
-    // For local files, read and convert to data URL
-    const buffer = await readFile(input.source);
-    const base64 = buffer.toString('base64');
-    const ext = input.source.toLowerCase().split('.').pop();
-    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
-    imageDataUrl = `data:${mimeType};base64,${base64}`;
-  }
+  // Convert all inputs to data URLs
+  const imageDataUrls = await Promise.all(inputs.map(toDataUrl));
 
   const falClient = createFal({ apiKey });
   const modelId = model || 'fal-ai/flux-2/edit';
@@ -174,7 +179,7 @@ async function executeEdit(
     prompt,
     providerOptions: {
       fal: {
-        image_urls: [imageDataUrl],
+        image_urls: imageDataUrls,
       },
     },
   });

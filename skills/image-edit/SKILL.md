@@ -5,19 +5,19 @@ description: Edits an existing image using a text prompt. Use when you need to m
 
 # Image Edit
 
-Edits an existing image using a text prompt (image-to-image transformation).
+Edits one or more images using a text prompt (image-to-image transformation). Supports multiple input images for combining styles, subjects, or scenes.
 
 ## Command
 
 ```bash
-agent-media image edit --in <path> --prompt <text> [options]
+agent-media image edit --in <paths...> --prompt <text> [options]
 ```
 
 ## Inputs
 
 | Option | Required | Description |
 |--------|----------|-------------|
-| `--in` | Yes | Input file path or URL |
+| `--in` | Yes | One or more input file paths or URLs |
 | `--prompt` | Yes | Text description of the desired edit |
 | `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (default: auto-detect) |
@@ -41,7 +41,7 @@ Returns a JSON object with the edited image path:
 
 ## Examples
 
-Edit an image:
+Edit a single image:
 ```bash
 agent-media image edit --in photo.jpg --prompt "make the sky more vibrant"
 ```
@@ -49,6 +49,11 @@ agent-media image edit --in photo.jpg --prompt "make the sky more vibrant"
 Add elements to an image:
 ```bash
 agent-media image edit --in portrait.png --prompt "add sunglasses"
+```
+
+Combine multiple images (pass multiple paths after `--in`, separated by spaces):
+```bash
+agent-media image edit --in person.png landscape.jpg --prompt "place the person from the first image into the landscape from the second image"
 ```
 
 Edit with specific provider:
