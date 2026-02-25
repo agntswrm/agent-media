@@ -1,5 +1,20 @@
 # agent-media
 
+## 0.12.0
+
+### Minor Changes
+
+- 8a08b63: Add multi-image support for image edit action. The `--in` flag now accepts multiple file paths or URLs, enabling use cases like combining styles, subjects, or scenes from different images. All four cloud providers (fal, replicate, runpod, ai-gateway) support multiple inputs. Single-image usage remains fully backward compatible.
+
+### Patch Changes
+
+- Updated dependencies [8a08b63]
+  - @agent-media/core@0.11.0
+  - @agent-media/image@0.8.0
+  - @agent-media/providers@0.11.0
+  - @agent-media/audio@0.5.3
+  - @agent-media/video@0.3.3
+
 ## 0.11.0
 
 ### Minor Changes

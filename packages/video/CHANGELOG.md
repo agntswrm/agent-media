@@ -1,5 +1,13 @@
 # @agent-media/video
 
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies [8a08b63]
+  - @agent-media/core@0.11.0
+  - @agent-media/providers@0.11.0
+
 ## 0.3.2
 
 ### Patch Changes
