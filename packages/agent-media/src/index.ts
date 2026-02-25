@@ -205,14 +205,14 @@ imageCommand
 // Image edit command
 imageCommand
   .command('edit')
-  .description('Edit an image using a text prompt (image-to-image)')
-  .requiredOption('--in <path>', 'Input file path or URL')
+  .description('Edit one or more images using a text prompt (image-to-image)')
+  .requiredOption('--in <paths...>', 'One or more input file paths or URLs')
   .requiredOption('--prompt <text>', 'Text description of the desired edit')
   .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (fal, replicate, runpod, ai-gateway)')
   .option('--model <name>', 'Model to use (overrides provider default, e.g., fal-ai/flux-2/edit)')
   .action(async (options: {
-    in: string;
+    in: string[];
     prompt: string;
     out?: string;
     provider?: string;
@@ -222,7 +222,7 @@ imageCommand
     const merged = mergeConfig(config, { out: options.out, provider: options.provider });
 
     const result = await edit({
-      input: options.in,
+      inputs: options.in,
       prompt: options.prompt,
       out: merged.outputDir,
       name: merged.outputName,

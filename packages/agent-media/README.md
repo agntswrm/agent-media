@@ -96,7 +96,7 @@ agent-media image convert --in <path> --format <f>
 agent-media image extend --in <path> --padding <px> --color <hex>
 agent-media image crop --in <path> --width <px> --height <px>
 agent-media image generate --prompt <text>
-agent-media image edit --in <path> --prompt <text>
+agent-media image edit --in <paths...> --prompt <text>
 agent-media image remove-background --in <path>
 agent-media image upscale --in <path>
 ```
@@ -198,16 +198,17 @@ agent-media image generate --prompt "sunset over mountains" --width 1024 --heigh
 
 *API key required*
 
-Edit an image using a text prompt (image-to-image).
+Edit one or more images using a text prompt (image-to-image). Supports multiple input images for combining styles, subjects, or scenes.
 
 ```bash
 agent-media image edit --in sunset-mountains.jpg --prompt "make the sky more vibrant"
 agent-media image edit --in https://ytrzap04kkm0giml.public.blob.vercel-storage.com/man-portrait.png --prompt "add sunglasses"
+agent-media image edit --in style.jpg content.jpg --prompt "apply the style of the first image to the second"
 ```
 
 | Option | Description |
 |--------|-------------|
-| `--in <path>` | Input file path or URL (required) |
+| `--in <paths...>` | One or more input file paths or URLs (required) |
 | `--prompt <text>` | Text description of the desired edit (required) |
 | `--out <path>` | Output path, filename or directory (default: ./) |
 | `--provider <name>` | Provider (fal, replicate, runpod, ai-gateway) |

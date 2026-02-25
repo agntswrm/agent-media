@@ -127,56 +127,67 @@ async function executeGenerate(
 }
 
 /**
+ * Convert a MediaInput to a base64 data URL
+ */
+async function toDataUrl(input: { source: string; isUrl: boolean }): Promise<string> {
+  if (input.isUrl) {
+    const response = await fetch(input.source);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch input image: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64 = buffer.toString('base64');
+    const contentType = response.headers.get('content-type') || 'image/png';
+    return `data:${contentType};base64,${base64}`;
+  } else {
+    const buffer = await readFile(input.source);
+    const base64 = buffer.toString('base64');
+    const ext = input.source.toLowerCase().split('.').pop();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+    return `data:${mimeType};base64,${base64}`;
+  }
+}
+
+/**
  * Execute edit action using Replicate flux-kontext model via AI SDK
  * Default model: black-forest-labs/flux-kontext-dev
+ * Supports multiple input images: first → image, additional → image_2, image_3, etc.
  */
 async function executeEdit(
   options: EditOptions,
   context: ActionContext,
   apiToken: string
 ): Promise<MediaResult> {
-  const { input, prompt, model } = options;
+  const { inputs, prompt, model } = options;
 
-  if (!input?.source) {
-    return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for image editing');
+  if (!inputs || inputs.length === 0) {
+    return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
   }
 
   if (!prompt) {
     return createError(ErrorCodes.INVALID_INPUT, 'Prompt is required for image editing');
   }
 
-  // Prepare the image as a data URL for the replicate API
-  let imageDataUrl: string;
-  if (input.isUrl) {
-    // For URLs, fetch and convert to data URL
-    const response = await fetch(input.source);
-    if (!response.ok) {
-      return createError(ErrorCodes.NETWORK_ERROR, `Failed to fetch input image: ${response.statusText}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString('base64');
-    const contentType = response.headers.get('content-type') || 'image/png';
-    imageDataUrl = `data:${contentType};base64,${base64}`;
-  } else {
-    // For local files, read and convert to data URL
-    const buffer = await readFile(input.source);
-    const base64 = buffer.toString('base64');
-    const ext = input.source.toLowerCase().split('.').pop();
-    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
-    imageDataUrl = `data:${mimeType};base64,${base64}`;
-  }
+  // Convert all inputs to data URLs
+  const imageDataUrls = await Promise.all(inputs.map(toDataUrl));
 
   const replicateClient = createReplicate({ apiToken });
   const modelId = model || 'black-forest-labs/flux-kontext-dev';
+
+  // Build provider options: first image → image, additional → image_2, image_3, etc.
+  const replicateOptions: Record<string, string> = {
+    image: imageDataUrls[0]!,
+  };
+  for (let i = 1; i < imageDataUrls.length; i++) {
+    replicateOptions[`image_${i + 1}`] = imageDataUrls[i]!;
+  }
 
   const { image } = await generateImage({
     model: replicateClient.image(modelId),
     prompt,
     providerOptions: {
-      replicate: {
-        image: imageDataUrl,
-      },
+      replicate: replicateOptions,
     },
   });
 

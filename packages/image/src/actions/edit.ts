@@ -2,8 +2,8 @@ import type { MediaResult, ActionContext, MediaInput } from '@agent-media/core';
 import { executeAction, globalRegistry } from '@agent-media/core';
 
 export interface EditInput {
-  /** Input file path or URL */
-  input: string;
+  /** One or more input file paths or URLs */
+  inputs: string[];
   /** Text prompt describing the desired edit */
   prompt: string;
   /** Output directory (overrides default) */
@@ -18,21 +18,20 @@ export interface EditInput {
 
 /**
  * Edit an image using a text prompt (image-to-image)
- * Requires an external provider (runpod)
+ * Supports multiple input images for multi-image editing
+ * Requires an external provider (fal, replicate, runpod, ai-gateway)
  */
 export async function edit(options: EditInput): Promise<MediaResult> {
-  const isUrl = options.input.startsWith('http://') || options.input.startsWith('https://');
-
-  const mediaInput: MediaInput = {
-    source: options.input,
-    isUrl,
-  };
+  const mediaInputs: MediaInput[] = options.inputs.map((input) => ({
+    source: input,
+    isUrl: input.startsWith('http://') || input.startsWith('https://'),
+  }));
 
   const context: ActionContext = {
     outputDir: options.out ?? process.cwd(),
     provider: options.provider,
     outputName: options.name,
-    inputSource: options.input,
+    inputSource: options.inputs[0],
   };
 
   return executeAction(
@@ -40,7 +39,7 @@ export async function edit(options: EditInput): Promise<MediaResult> {
     {
       action: 'edit',
       options: {
-        input: mediaInput,
+        inputs: mediaInputs,
         prompt: options.prompt,
         model: options.model,
       },

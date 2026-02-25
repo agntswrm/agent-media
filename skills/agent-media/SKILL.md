@@ -13,7 +13,7 @@ Agent Media is an agent-first media toolkit that provides CLI-accessible command
 - `agent-media image resize` - Resize an image
 - `agent-media image convert` - Convert image format
 - `agent-media image generate` - Generate image from text
-- `agent-media image edit` - Edit image with text prompt
+- `agent-media image edit` - Edit one or more images with text prompt
 - `agent-media image remove-background` - Remove image background
 - `agent-media image upscale` - Upscale image with AI super-resolution
 - `agent-media image extend` - Extend image canvas with padding

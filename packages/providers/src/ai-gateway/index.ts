@@ -191,10 +191,34 @@ async function executeGenerate(
 }
 
 /**
+ * Convert a MediaInput to a base64 data URL
+ */
+async function toDataUrl(input: { source: string; isUrl: boolean }): Promise<string> {
+  if (input.isUrl) {
+    const response = await fetch(input.source);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch input image: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64 = buffer.toString('base64');
+    const contentType = response.headers.get('content-type') || 'image/png';
+    return `data:${contentType};base64,${base64}`;
+  } else {
+    const buffer = await readFile(input.source);
+    const base64 = buffer.toString('base64');
+    const ext = input.source.toLowerCase().split('.').pop();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+    return `data:${mimeType};base64,${base64}`;
+  }
+}
+
+/**
  * Execute edit action using AI Gateway with Google Nano Banana Pro
  * Default model: google/gemini-3-pro-image
  *
  * Uses generateText() with multimodal input and extracts generated images from result.files
+ * Supports multiple input images as separate image content parts
  * Note: AI Gateway uses model ID strings directly, not a provider client.
  */
 async function executeEdit(
@@ -202,40 +226,34 @@ async function executeEdit(
   context: ActionContext,
   _apiKey: string
 ): Promise<MediaResult> {
-  const { input, prompt, model } = options;
+  const { inputs, prompt, model } = options;
 
-  if (!input?.source) {
-    return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for image editing');
+  if (!inputs || inputs.length === 0) {
+    return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
   }
 
   if (!prompt) {
     return createError(ErrorCodes.INVALID_INPUT, 'Prompt is required for image editing');
   }
 
-  // Prepare the image as base64 data URL
-  let imageDataUrl: string;
-  if (input.isUrl) {
-    const response = await fetch(input.source);
-    if (!response.ok) {
-      return createError(ErrorCodes.NETWORK_ERROR, `Failed to fetch input image: ${response.statusText}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString('base64');
-    const contentType = response.headers.get('content-type') || 'image/png';
-    imageDataUrl = `data:${contentType};base64,${base64}`;
-  } else {
-    const buffer = await readFile(input.source);
-    const base64 = buffer.toString('base64');
-    const ext = input.source.toLowerCase().split('.').pop();
-    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
-    imageDataUrl = `data:${mimeType};base64,${base64}`;
-  }
+  // Convert all inputs to data URLs
+  const imageDataUrls = await Promise.all(inputs.map(toDataUrl));
 
   const modelId = model || 'google/gemini-3-pro-image';
 
+  // Build content parts: all images first, then the text prompt
+  const contentParts: Array<{ type: 'image'; image: string } | { type: 'text'; text: string }> = [
+    ...imageDataUrls.map((dataUrl) => ({
+      type: 'image' as const,
+      image: dataUrl,
+    })),
+    {
+      type: 'text' as const,
+      text: prompt,
+    },
+  ];
+
   // Use generateText with multimodal content for image editing
-  // Nano Banana Pro models can generate images as output files
   // The API key is read from AI_GATEWAY_API_KEY environment variable automatically
   let result;
   try {
@@ -244,16 +262,7 @@ async function executeEdit(
       messages: [
         {
           role: 'user',
-          content: [
-            {
-              type: 'image',
-              image: imageDataUrl,
-            },
-            {
-              type: 'text',
-              text: prompt,
-            },
-          ],
+          content: contentParts,
         },
       ],
     });
