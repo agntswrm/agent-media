@@ -126,39 +126,16 @@ async function executeGenerate(
 }
 
 /**
- * Convert a MediaInput to a base64 data URL
- */
-async function toDataUrl(input: { source: string; isUrl: boolean }): Promise<string> {
-  if (input.isUrl) {
-    const response = await fetch(input.source);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch input image: ${response.statusText}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString('base64');
-    const contentType = response.headers.get('content-type') || 'image/png';
-    return `data:${contentType};base64,${base64}`;
-  } else {
-    const buffer = await readFile(input.source);
-    const base64 = buffer.toString('base64');
-    const ext = input.source.toLowerCase().split('.').pop();
-    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
-    return `data:${mimeType};base64,${base64}`;
-  }
-}
-
-/**
  * Execute edit action using fal.ai flux-2 edit model via AI SDK
  * Default model: fal-ai/flux-2/edit
- * Supports multiple input images via providerOptions.fal.image_urls array
+ * Supports multiple input images via prompt.images + useMultipleImages option
  */
 async function executeEdit(
   options: EditOptions,
   context: ActionContext,
   apiKey: string
 ): Promise<MediaResult> {
-  const { inputs, prompt, model } = options;
+  const { inputs, prompt, model, aspectRatio, resolution } = options;
 
   if (!inputs || inputs.length === 0) {
     return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
@@ -168,19 +145,41 @@ async function executeEdit(
     return createError(ErrorCodes.INVALID_INPUT, 'Prompt is required for image editing');
   }
 
-  // Convert all inputs to data URLs
-  const imageDataUrls = await Promise.all(inputs.map(toDataUrl));
+  // Convert all inputs to buffers for AI SDK prompt.images
+  const imageBuffers = await Promise.all(inputs.map(async (input) => {
+    if (input.isUrl) {
+      const response = await fetch(input.source);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch input image: ${response.statusText}`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    }
+    return readFile(input.source);
+  }));
 
   const falClient = createFal({ apiKey });
   const modelId = model || 'fal-ai/flux-2/edit';
 
+  // Build fal-specific provider options
+  const falOptions: Record<string, string | boolean> = {
+    useMultipleImages: inputs.length > 1,
+  };
+  if (aspectRatio) {
+    falOptions['aspect_ratio'] = aspectRatio;
+  }
+  if (resolution) {
+    falOptions['resolution'] = resolution;
+  }
+
   const { image } = await generateImage({
     model: falClient.image(modelId),
-    prompt,
+    prompt: {
+      text: prompt,
+      images: imageBuffers,
+    },
     providerOptions: {
-      fal: {
-        image_urls: imageDataUrls,
-      },
+      fal: falOptions,
     },
   });
 

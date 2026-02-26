@@ -147,7 +147,7 @@ async function executeEdit(
   context: ActionContext,
   apiKey: string
 ): Promise<MediaResult> {
-  const { inputs, prompt } = options;
+  const { inputs, prompt, aspectRatio, resolution } = options;
 
   if (!inputs || inputs.length === 0) {
     return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
@@ -162,12 +162,24 @@ async function executeEdit(
   // Convert all inputs to buffers
   const imageBuffers = await Promise.all(inputs.map(toBuffer));
 
+  // Build provider options
+  const runpodOptions: Record<string, string> = {};
+  if (aspectRatio) {
+    runpodOptions['aspect_ratio'] = aspectRatio;
+  }
+  if (resolution) {
+    runpodOptions['resolution'] = resolution;
+  }
+
   const { image } = await generateImage({
     model: runpod.image('google/nano-banana-pro-edit'),
     prompt: {
       text: prompt,
       images: imageBuffers,
     },
+    ...(Object.keys(runpodOptions).length > 0 ? {
+      providerOptions: { runpod: runpodOptions },
+    } : {}),
   });
 
   const outputFilename = resolveOutputFilename('png', 'edited', context.outputName, context.inputSource);

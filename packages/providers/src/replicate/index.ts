@@ -159,7 +159,7 @@ async function executeEdit(
   context: ActionContext,
   apiToken: string
 ): Promise<MediaResult> {
-  const { inputs, prompt, model } = options;
+  const { inputs, prompt, model, aspectRatio } = options;
 
   if (!inputs || inputs.length === 0) {
     return createError(ErrorCodes.INVALID_INPUT, 'At least one input image is required for image editing');
@@ -176,11 +176,14 @@ async function executeEdit(
   const modelId = model || 'black-forest-labs/flux-kontext-dev';
 
   // Build provider options: first image → image, additional → image_2, image_3, etc.
-  const replicateOptions: Record<string, string> = {
+  const replicateOptions: Record<string, string | number> = {
     image: imageDataUrls[0]!,
   };
   for (let i = 1; i < imageDataUrls.length; i++) {
     replicateOptions[`image_${i + 1}`] = imageDataUrls[i]!;
+  }
+  if (aspectRatio) {
+    replicateOptions['aspect_ratio'] = aspectRatio;
   }
 
   const { image } = await generateImage({
