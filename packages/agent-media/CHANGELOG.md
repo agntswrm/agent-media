@@ -1,5 +1,11 @@
 # agent-media
 
+## 0.13.1
+
+### Patch Changes
+
+- 13d8db3: Read CLI version from package.json instead of hardcoded value so --version reports the correct published version
+
 ## 0.13.0
 
 ### Minor Changes
