@@ -1,5 +1,21 @@
 # @agent-media/image
 
+## 0.9.0
+
+### Minor Changes
+
+- 7c055c4: Fix multi-image edit and add aspect-ratio/resolution options
+
+  - Fix fal provider to use AI SDK's `prompt.images` + `useMultipleImages` instead of raw `image_urls` passthrough
+  - Add `--aspect-ratio` and `--resolution` CLI options for image edit
+  - Pass aspect_ratio/resolution through fal, replicate, and runpod providers
+
+### Patch Changes
+
+- Updated dependencies [7c055c4]
+  - @agent-media/core@0.12.0
+  - @agent-media/providers@0.12.0
+
 ## 0.8.0
 
 ### Minor Changes
