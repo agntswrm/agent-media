@@ -8,6 +8,10 @@ import { extract, transcribe } from '@agent-media/audio';
 import { generate as videoGenerate } from '@agent-media/video';
 import type { ImageFormat, AudioFormat, VideoResolution, VideoFps } from '@agent-media/core';
 import { getConfig, mergeConfig } from '@agent-media/core';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
 
 // Register all providers on startup
 registerAllProviders();
@@ -17,7 +21,7 @@ const program = new Command();
 program
   .name('agent-media')
   .description('Agent-first media toolkit with CLI-accessible commands')
-  .version('0.1.0');
+  .version(version);
 
 // Image command group
 const imageCommand = program
