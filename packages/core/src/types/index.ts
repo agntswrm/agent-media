@@ -121,6 +121,10 @@ export interface EditOptions {
   prompt: string;
   /** Override default model (e.g., "fal-ai/flux-2/edit") */
   model?: string;
+  /** Aspect ratio for output (e.g., "1:1", "16:9", "auto") */
+  aspectRatio?: string;
+  /** Output resolution (e.g., "1K", "2K", "4K") */
+  resolution?: string;
 }
 
 /**

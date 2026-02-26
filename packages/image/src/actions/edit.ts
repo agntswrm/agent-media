@@ -14,6 +14,10 @@ export interface EditInput {
   provider?: string;
   /** Model to use (overrides provider default) */
   model?: string;
+  /** Aspect ratio for output (e.g., "1:1", "16:9", "auto") */
+  aspectRatio?: string;
+  /** Output resolution (e.g., "1K", "2K", "4K") */
+  resolution?: string;
 }
 
 /**
@@ -42,6 +46,8 @@ export async function edit(options: EditInput): Promise<MediaResult> {
         inputs: mediaInputs,
         prompt: options.prompt,
         model: options.model,
+        aspectRatio: options.aspectRatio,
+        resolution: options.resolution,
       },
     },
     context
