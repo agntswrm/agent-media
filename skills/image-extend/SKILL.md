@@ -1,6 +1,7 @@
 ---
 name: image-extend
 description: Extends an image canvas by adding padding on all sides with a solid background color. Use when you need to add borders, margins, or expand the canvas area around an image.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Extend
@@ -10,7 +11,7 @@ Extends an image canvas by adding padding on all sides with a solid background c
 ## Command
 
 ```bash
-agent-media image extend --in <path> --padding <pixels> --color <hex> [options]
+npx agent-media@latest image extend --in <path> --padding <pixels> --color <hex> [options]
 ```
 
 ## Inputs
@@ -43,17 +44,17 @@ Returns a JSON object with the extended image path:
 
 Add white padding around an image:
 ```bash
-agent-media image extend --in photo.jpg --padding 50 --color "#FFFFFF"
+npx agent-media@latest image extend --in photo.jpg --padding 50 --color "#FFFFFF"
 ```
 
 Add colored border:
 ```bash
-agent-media image extend --in artwork.png --padding 100 --color "#E4ECF8"
+npx agent-media@latest image extend --in artwork.png --padding 100 --color "#E4ECF8"
 ```
 
 Extend with custom DPI:
 ```bash
-agent-media image extend --in print-ready.jpg --padding 75 --color "#000000" --dpi 600
+npx agent-media@latest image extend --in print-ready.jpg --padding 75 --color "#000000" --dpi 600
 ```
 
 ## Providers

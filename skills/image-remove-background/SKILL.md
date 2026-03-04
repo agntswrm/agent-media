@@ -1,6 +1,7 @@
 ---
 name: image-remove-background
 description: Removes the background from an image, leaving the foreground subject with transparency. Use when you need to isolate subjects, create cutouts, or prepare images for compositing.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Remove Background
@@ -10,7 +11,7 @@ Removes the background from an image, leaving only the foreground subject with t
 ## Command
 
 ```bash
-agent-media image remove-background --in <path> [options]
+npx agent-media@latest image remove-background --in <path> [options]
 ```
 
 ## Inputs
@@ -20,6 +21,7 @@ agent-media image remove-background --in <path> [options]
 | `--in` | Yes | Input file path or URL |
 | `--out` | No | Output path, filename or directory (default: ./) |
 | `--provider` | No | Provider to use (local, fal, replicate) |
+| `--resolution` | No | Output resolution (e.g., "2048x2048"). Supported by fal Dynamic model. |
 
 ## Output
 
@@ -41,12 +43,17 @@ Returns a JSON object with the processed image path:
 
 Remove background from local file:
 ```bash
-agent-media image remove-background --in portrait.jpg
+npx agent-media@latest image remove-background --in portrait.jpg
 ```
 
 Remove background using specific provider:
 ```bash
-agent-media image remove-background --in portrait.jpg --provider replicate
+npx agent-media@latest image remove-background --in portrait.jpg --provider replicate
+```
+
+Remove background at full resolution (fal Dynamic model):
+```bash
+npx agent-media@latest image remove-background --in portrait.jpg --provider fal --resolution 2048x2048
 ```
 
 ## Providers
@@ -60,13 +67,14 @@ Runs locally on CPU using [Transformers.js](https://huggingface.co/docs/transfor
 - You may see a `mutex lock failed` error — ignore it, the output is correct if `"ok": true`
 
 ```bash
-agent-media image remove-background --in portrait.jpg --provider local
+npx agent-media@latest image remove-background --in portrait.jpg --provider local
 ```
 
 ### fal
 
 - Requires `FAL_API_KEY`
-- Uses `birefnet/v2` model
+- Uses `birefnet/v2` model with `General Use (Dynamic)` variant
+- Supports `--resolution` option (e.g., "2048x2048") for processing at full input resolution
 
 ### replicate
 

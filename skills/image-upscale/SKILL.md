@@ -1,6 +1,7 @@
 ---
 name: image-upscale
 description: Upscales an image using AI super-resolution to increase resolution with detail generation. Use when you need to enlarge images, improve low-resolution photos, or prepare images for large-format display.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Upscale
@@ -10,7 +11,7 @@ Upscales an image using AI super-resolution models, increasing resolution while 
 ## Command
 
 ```bash
-agent-media image upscale --in <path> [options]
+npx agent-media@latest image upscale --in <path> [options]
 ```
 
 ## Inputs
@@ -43,17 +44,17 @@ Returns a JSON object with the upscaled image path:
 
 Upscale an image (default 2x):
 ```bash
-agent-media image upscale --in photo.jpg
+npx agent-media@latest image upscale --in photo.jpg
 ```
 
 Upscale 4x with specific provider:
 ```bash
-agent-media image upscale --in photo.jpg --scale 4 --provider fal
+npx agent-media@latest image upscale --in photo.jpg --scale 4 --provider fal
 ```
 
 Upscale with custom output:
 ```bash
-agent-media image upscale --in photo.jpg --out ./upscaled
+npx agent-media@latest image upscale --in photo.jpg --out ./upscaled
 ```
 
 ## Providers
@@ -68,7 +69,7 @@ Runs locally on CPU using [Transformers.js](https://huggingface.co/docs/transfor
 - You may see a `mutex lock failed` error — ignore it, the output is correct if `"ok": true`
 
 ```bash
-agent-media image upscale --in photo.jpg --provider local
+npx agent-media@latest image upscale --in photo.jpg --provider local
 ```
 
 ### fal

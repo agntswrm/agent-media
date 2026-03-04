@@ -12,6 +12,8 @@ export interface RemoveBackgroundInput {
   provider?: string;
   /** Model to use (overrides provider default) */
   model?: string;
+  /** Output resolution (e.g., "2048x2048"). Supported by fal Dynamic model. */
+  resolution?: string;
 }
 
 /**
@@ -40,6 +42,7 @@ export async function removeBackground(options: RemoveBackgroundInput): Promise<
       options: {
         input,
         model: options.model,
+        resolution: options.resolution,
       },
     },
     context

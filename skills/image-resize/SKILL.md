@@ -1,6 +1,7 @@
 ---
 name: image-resize
 description: Resizes an image to specified dimensions. Use when you need to change image size, create thumbnails, or prepare images for specific display requirements.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Resize
@@ -10,7 +11,7 @@ Resizes an image to a target width or height while optionally maintaining aspect
 ## Command
 
 ```bash
-agent-media image resize --in <path> [options]
+npx agent-media@latest image resize --in <path> [options]
 ```
 
 ## Inputs
@@ -45,17 +46,17 @@ Returns a JSON object with the resized image path:
 
 Resize to 800px width:
 ```bash
-agent-media image resize --in photo.jpg --width 800
+npx agent-media@latest image resize --in photo.jpg --width 800
 ```
 
 Resize to exact dimensions:
 ```bash
-agent-media image resize --in photo.jpg --width 1024 --height 768
+npx agent-media@latest image resize --in photo.jpg --width 1024 --height 768
 ```
 
 Resize with custom output:
 ```bash
-agent-media image resize --in image.png --width 500 --out ./resized
+npx agent-media@latest image resize --in image.png --width 500 --out ./resized
 ```
 
 ## Providers

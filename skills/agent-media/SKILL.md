@@ -1,6 +1,7 @@
 ---
 name: agent-media
 description: Agent-first media toolkit for image, video, and audio processing. Use when you need to resize, convert, generate, edit, upscale images, remove backgrounds, extend or crop canvases, extract audio, transcribe speech, or generate videos. All commands return deterministic JSON output.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Agent Media
@@ -10,21 +11,21 @@ Agent Media is an agent-first media toolkit that provides CLI-accessible command
 ## Available Commands
 
 ### Image Commands
-- `agent-media image resize` - Resize an image
-- `agent-media image convert` - Convert image format
-- `agent-media image generate` - Generate image from text
-- `agent-media image edit` - Edit one or more images with text prompt
-- `agent-media image remove-background` - Remove image background
-- `agent-media image upscale` - Upscale image with AI super-resolution
-- `agent-media image extend` - Extend image canvas with padding
-- `agent-media image crop` - Crop image to dimensions around focal point
+- `npx agent-media@latest image resize` - Resize an image
+- `npx agent-media@latest image convert` - Convert image format
+- `npx agent-media@latest image generate` - Generate image from text
+- `npx agent-media@latest image edit` - Edit one or more images with text prompt
+- `npx agent-media@latest image remove-background` - Remove image background
+- `npx agent-media@latest image upscale` - Upscale image with AI super-resolution
+- `npx agent-media@latest image extend` - Extend image canvas with padding
+- `npx agent-media@latest image crop` - Crop image to dimensions around focal point
 
 ### Audio Commands
-- `agent-media audio extract` - Extract audio from video
-- `agent-media audio transcribe` - Transcribe audio to text
+- `npx agent-media@latest audio extract` - Extract audio from video
+- `npx agent-media@latest audio transcribe` - Transcribe audio to text
 
 ### Video Commands
-- `agent-media video generate` - Generate video from text or image
+- `npx agent-media@latest video generate` - Generate video from text or image
 
 ## Output Format
 

@@ -1,6 +1,7 @@
 ---
 name: image-generate
 description: Generates an image from a text prompt using AI models. Use when you need to create images from descriptions, generate artwork, or produce visual content from text.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Generate
@@ -10,7 +11,7 @@ Generates an image from a text prompt using AI image generation models.
 ## Command
 
 ```bash
-agent-media image generate --prompt <text> [options]
+npx agent-media@latest image generate --prompt <text> [options]
 ```
 
 ## Inputs
@@ -44,17 +45,17 @@ Returns a JSON object with the generated image path:
 
 Generate an image:
 ```bash
-agent-media image generate --prompt "a red robot standing in a forest"
+npx agent-media@latest image generate --prompt "a red robot standing in a forest"
 ```
 
 Generate with specific dimensions:
 ```bash
-agent-media image generate --prompt "sunset over mountains" --width 1024 --height 768
+npx agent-media@latest image generate --prompt "sunset over mountains" --width 1024 --height 768
 ```
 
 Generate using specific provider:
 ```bash
-agent-media image generate --prompt "abstract art" --provider replicate
+npx agent-media@latest image generate --prompt "abstract art" --provider replicate
 ```
 
 ## Providers

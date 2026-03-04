@@ -1,6 +1,7 @@
 ---
 name: image-edit
 description: Edits an existing image using a text prompt. Use when you need to modify, enhance, or transform an image based on text instructions.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Edit
@@ -10,7 +11,7 @@ Edits one or more images using a text prompt (image-to-image transformation). Su
 ## Command
 
 ```bash
-agent-media image edit --in <paths...> --prompt <text> [options]
+npx agent-media@latest image edit --in <paths...> --prompt <text> [options]
 ```
 
 ## Inputs
@@ -45,27 +46,27 @@ Returns a JSON object with the edited image path:
 
 Edit a single image:
 ```bash
-agent-media image edit --in photo.jpg --prompt "make the sky more vibrant"
+npx agent-media@latest image edit --in photo.jpg --prompt "make the sky more vibrant"
 ```
 
 Add elements to an image:
 ```bash
-agent-media image edit --in portrait.png --prompt "add sunglasses"
+npx agent-media@latest image edit --in portrait.png --prompt "add sunglasses"
 ```
 
 Combine multiple images (pass multiple paths after `--in`, separated by spaces):
 ```bash
-agent-media image edit --in person.png landscape.jpg --prompt "place the person from the first image into the landscape from the second image"
+npx agent-media@latest image edit --in person.png landscape.jpg --prompt "place the person from the first image into the landscape from the second image"
 ```
 
 Multi-image edit with aspect ratio and resolution:
 ```bash
-agent-media image edit --in template.png person.jpg --prompt "Use image one as the template and reframe the person from image two to match" --aspect-ratio 1:1 --resolution 2K --model fal-ai/nano-banana-pro/edit
+npx agent-media@latest image edit --in template.png person.jpg --prompt "Use image one as the template and reframe the person from image two to match" --aspect-ratio 1:1 --resolution 2K --model fal-ai/nano-banana-pro/edit
 ```
 
 Edit with specific provider:
 ```bash
-agent-media image edit --in scene.jpg --prompt "change to night time" --provider replicate
+npx agent-media@latest image edit --in scene.jpg --prompt "change to night time" --provider replicate
 ```
 
 ## Providers

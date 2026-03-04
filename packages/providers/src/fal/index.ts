@@ -209,7 +209,7 @@ async function executeRemoveBackground(
   context: ActionContext,
   apiKey: string
 ): Promise<MediaResult> {
-  const { input } = options;
+  const { input, resolution } = options;
 
   if (!input?.source) {
     return createError(ErrorCodes.INVALID_INPUT, 'Input source is required for background removal');
@@ -230,6 +230,16 @@ async function executeRemoveBackground(
     imageBuffer = await readFile(input.source);
   }
 
+  // Build fal-specific provider options for birefnet/v2 Dynamic model
+  const falOptions: Record<string, string | boolean> = {
+    model: 'General Use (Dynamic)',
+    outputFormat: 'png',
+    refineForeground: true,
+  };
+  if (resolution) {
+    falOptions['resolution'] = resolution;
+  }
+
   // Use generateImage with birefnet model - image input only, minimal text
   const { image } = await generateImage({
     model: falClient.image('fal-ai/birefnet/v2'),
@@ -238,11 +248,7 @@ async function executeRemoveBackground(
       images: [imageBuffer],
     },
     providerOptions: {
-      fal: {
-        model: 'General Use (Light)',
-        outputFormat: 'png',
-        refineForeground: true,
-      },
+      fal: falOptions,
     },
   });
 
