@@ -109,11 +109,13 @@ imageCommand
   .option('--out <path>', 'Output path, filename or directory (default: ./)')
   .option('--provider <name>', 'Provider to use (local, fal, replicate)')
   .option('--model <name>', 'Model to use (overrides provider default)')
+  .option('--resolution <value>', 'Output resolution (e.g., "2048x2048"). Supported by fal Dynamic model.')
   .action(async (options: {
     in: string;
     out?: string;
     provider?: string;
     model?: string;
+    resolution?: string;
   }) => {
     const config = getConfig();
     const merged = mergeConfig(config, { out: options.out, provider: options.provider });
@@ -124,6 +126,7 @@ imageCommand
       name: merged.outputName,
       provider: merged.provider,
       model: options.model,
+      resolution: options.resolution,
     });
 
     printResult(result);

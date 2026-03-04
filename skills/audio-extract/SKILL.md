@@ -1,6 +1,7 @@
 ---
 name: audio-extract
 description: Extracts audio track from a video file. Use when you need to get audio from video, prepare audio for transcription, or separate audio from video content. Runs locally with no API key required.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Audio Extract
@@ -10,7 +11,7 @@ Extracts the audio track from a video file. This is a local operation using the 
 ## Command
 
 ```bash
-agent-media audio extract --in <path> [options]
+npx agent-media@latest audio extract --in <path> [options]
 ```
 
 ## Inputs
@@ -41,17 +42,17 @@ Returns a JSON object with the extracted audio file:
 
 Extract audio as MP3 (default):
 ```bash
-agent-media audio extract --in video.mp4
+npx agent-media@latest audio extract --in video.mp4
 ```
 
 Extract audio as WAV:
 ```bash
-agent-media audio extract --in video.mp4 --format wav
+npx agent-media@latest audio extract --in video.mp4 --format wav
 ```
 
 Custom output directory:
 ```bash
-agent-media audio extract --in video.mp4 --out ./audio-files
+npx agent-media@latest audio extract --in video.mp4 --out ./audio-files
 ```
 
 ## Use Case: Video Transcription Workflow
@@ -60,11 +61,11 @@ Since transcription services work best with audio files (smaller uploads, faster
 
 ```bash
 # Step 1: Extract audio from video (local, instant)
-agent-media audio extract --in interview.mp4 --format mp3
+npx agent-media@latest audio extract --in interview.mp4 --format mp3
 # Output: extracted_xxx.mp3
 
 # Step 2: Transcribe the audio (cloud API)
-agent-media audio transcribe --in extracted_xxx.mp3 --provider fal
+npx agent-media@latest audio transcribe --in extracted_xxx.mp3 --provider fal
 ```
 
 ## Provider

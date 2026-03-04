@@ -81,6 +81,8 @@ export interface RemoveBackgroundOptions {
   input: MediaInput;
   /** Override default model (e.g., "fal-ai/birefnet/v2") */
   model?: string;
+  /** Output resolution (e.g., "2048x2048"). Supported by fal Dynamic model. */
+  resolution?: string;
 }
 
 /**

@@ -1,6 +1,7 @@
 ---
 name: audio-transcribe
 description: Transcribes audio to text with timestamps and optional speaker identification. Use when you need to convert speech to text, create subtitles, transcribe meetings, or process voice recordings.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Audio Transcribe
@@ -10,7 +11,7 @@ Transcribes audio files to text with timestamps. Supports automatic language det
 ## Command
 
 ```bash
-agent-media audio transcribe --in <path> [options]
+npx agent-media@latest audio transcribe --in <path> [options]
 ```
 
 ## Inputs
@@ -50,22 +51,22 @@ Returns a JSON object with transcription data:
 
 Basic transcription (auto-detect language):
 ```bash
-agent-media audio transcribe --in interview.mp3
+npx agent-media@latest audio transcribe --in interview.mp3
 ```
 
 Transcription with speaker identification:
 ```bash
-agent-media audio transcribe --in meeting.wav --diarize
+npx agent-media@latest audio transcribe --in meeting.wav --diarize
 ```
 
 Transcription with specific language and speaker count:
 ```bash
-agent-media audio transcribe --in podcast.mp3 --diarize --language en --speakers 3
+npx agent-media@latest audio transcribe --in podcast.mp3 --diarize --language en --speakers 3
 ```
 
 Use specific provider:
 ```bash
-agent-media audio transcribe --in audio.wav --provider replicate
+npx agent-media@latest audio transcribe --in audio.wav --provider replicate
 ```
 
 ## Extracting Audio from Video
@@ -74,10 +75,10 @@ To transcribe a video file, first extract the audio:
 
 ```bash
 # Step 1: Extract audio from video
-agent-media audio extract --in video.mp4 --format mp3
+npx agent-media@latest audio extract --in video.mp4 --format mp3
 
 # Step 2: Transcribe the extracted audio
-agent-media audio transcribe --in extracted_xxx.mp3
+npx agent-media@latest audio transcribe --in extracted_xxx.mp3
 ```
 
 ## Providers
@@ -92,7 +93,7 @@ Runs locally on CPU using [Transformers.js](https://huggingface.co/docs/transfor
 - You may see a `mutex lock failed` error — ignore it, the output is correct if `"ok": true`
 
 ```bash
-agent-media audio transcribe --in audio.mp3 --provider local
+npx agent-media@latest audio transcribe --in audio.mp3 --provider local
 ```
 
 ### fal
@@ -114,5 +115,5 @@ agent-media audio transcribe --in audio.mp3 --provider local
 - Does NOT support diarization (speaker identification) - use fal or replicate for diarization
 
 ```bash
-agent-media audio transcribe --in audio.mp3 --provider runpod
+npx agent-media@latest audio transcribe --in audio.mp3 --provider runpod
 ```

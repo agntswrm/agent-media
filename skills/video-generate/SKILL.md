@@ -1,6 +1,7 @@
 ---
 name: video-generate
 description: Generates video from text prompts or animates static images. Use when you need to create videos from descriptions, animate images, or produce video content using AI.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Video Generate
@@ -10,7 +11,7 @@ Generates a video from a text prompt using AI video generation models. Supports 
 ## Command
 
 ```bash
-agent-media video generate --prompt <text> [options]
+npx agent-media@latest video generate --prompt <text> [options]
 ```
 
 ## Inputs
@@ -47,27 +48,27 @@ Returns a JSON object with the generated video path:
 
 Generate a video from text:
 ```bash
-agent-media video generate --prompt "a cat walking in a garden"
+npx agent-media@latest video generate --prompt "a cat walking in a garden"
 ```
 
 Generate a longer video with higher resolution:
 ```bash
-agent-media video generate --prompt "ocean waves crashing on a beach" --duration 10 --resolution 1080p
+npx agent-media@latest video generate --prompt "ocean waves crashing on a beach" --duration 10 --resolution 1080p
 ```
 
 Animate an existing image (image-to-video):
 ```bash
-agent-media video generate --in portrait.png --prompt "the person waves hello and smiles"
+npx agent-media@latest video generate --in portrait.png --prompt "the person waves hello and smiles"
 ```
 
 Generate with audio:
 ```bash
-agent-media video generate --prompt "fireworks exploding in the night sky" --audio
+npx agent-media@latest video generate --prompt "fireworks exploding in the night sky" --audio
 ```
 
 Use a specific provider:
 ```bash
-agent-media video generate --prompt "a rocket launching" --provider replicate
+npx agent-media@latest video generate --prompt "a rocket launching" --provider replicate
 ```
 
 ## Providers

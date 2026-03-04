@@ -1,6 +1,7 @@
 ---
 name: image-convert
 description: Converts an image to a different format (PNG, JPG, WebP). Use when you need to change image formats, optimize for web, or prepare images for specific applications.
+compatibility: Requires Node.js 18+. Run via npx agent-media@latest or npm install -g agent-media.
 ---
 
 # Image Convert
@@ -10,7 +11,7 @@ Converts an image to a different format (PNG, JPG, or WebP).
 ## Command
 
 ```bash
-agent-media image convert --in <path> --format <format> [options]
+npx agent-media@latest image convert --in <path> --format <format> [options]
 ```
 
 ## Inputs
@@ -43,17 +44,17 @@ Returns a JSON object with the converted image path:
 
 Convert PNG to WebP:
 ```bash
-agent-media image convert --in photo.png --format webp
+npx agent-media@latest image convert --in photo.png --format webp
 ```
 
 Convert to high-quality JPEG:
 ```bash
-agent-media image convert --in photo.png --format jpg --quality 95
+npx agent-media@latest image convert --in photo.png --format jpg --quality 95
 ```
 
 Convert with custom output directory:
 ```bash
-agent-media image convert --in image.png --format webp --out ./converted
+npx agent-media@latest image convert --in image.png --format webp --out ./converted
 ```
 
 ## Providers
