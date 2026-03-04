@@ -1,5 +1,11 @@
 # @agent-media/core
 
+## 0.13.0
+
+### Minor Changes
+
+- 47df559: Add resolution support and Dynamic model for remove-background (fal provider)
+
 ## 0.12.0
 
 ### Minor Changes

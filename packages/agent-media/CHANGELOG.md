@@ -1,5 +1,20 @@
 # agent-media
 
+## 0.14.0
+
+### Minor Changes
+
+- 47df559: Add resolution support and Dynamic model for remove-background (fal provider)
+
+### Patch Changes
+
+- Updated dependencies [47df559]
+  - @agent-media/core@0.13.0
+  - @agent-media/providers@0.13.0
+  - @agent-media/image@0.10.0
+  - @agent-media/audio@0.5.5
+  - @agent-media/video@0.3.5
+
 ## 0.13.1
 
 ### Patch Changes
